@@ -22,11 +22,10 @@ The file that contains the graph must have the following format.
    
 How to Compile and Run
 ----------------------
-You can compile everything from within the interpreter with
-```erlang
-c(graph),c(graph_lib),c(dijkstra),c(bfs),c(e).
-```
+*  You can compile everything from within the interpreter with
+  ```erlang
+  c(graph),c(graph_lib),c(dijkstra),c(bfs),c(e).
+  ```
+  The file e.erl contains a demo. You can view it with ```erlang e:run()```
 
-The file e.erl contains a demo. You can view it with ```erlang e:run()```
-
-Or you can compile with `make` from the Unix Shell and run the demo with `erl -noshell -s e run -s init stop`
+*  Or you can compile with `make` from the Unix Shell and run the demo with `erl -noshell -s e run -s init stop`
