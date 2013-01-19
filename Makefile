@@ -1,6 +1,7 @@
 ERLC=erlc
 ERLC_FLAGS= +native
-ERL_FILES=graph.erl graph_lib.erl dijkstra.erl bfs.erl dfs.erl e.erl
+ERL_FILES=graph.erl graph_lib.erl dijkstra.erl bfs.erl dfs.erl \
+  heap.erl demo.erl
 BEAM_FILES=$(patsubst %.erl,%.beam,$(ERL_FILES))
 
 default: $(BEAM_FILES)
