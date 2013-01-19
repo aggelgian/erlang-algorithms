@@ -7,27 +7,17 @@ Graph Specs
 The file that contains the graph must have the following format.
 
 *  The 1st line will consist of four terms separeted by a white space.
+   1.  1st Term: Positive Integer N that denotes the number of vertices.
+   2.  2nd Term: Positive Integer M that denotes the number of edges.
+   3.  3rd Term: Atom `directed` or  `undirected` that denotes the type of the graph.
+   4.  4th Term: Atom `unweighted` or `d` or `u` or `f` that denotes the type of the edge weights.
+       a.  `unwighted` is for an  unweighted graph.
+       b.  `d` is for decimal integer weights.
+       c.  `u` is for unsigned integer in base 2..36 weights.
+       d.  `f` is for floating point number weights in proper Erlang syntax.
 
-   1st Term: Positive Integer N that denotes the number of vertices.
-   
-   2nd Term: Positive Integer M that denotes the number of edges.
-   
-   3rd Term: Atom `directed` or  `undirected` that denotes the type of the graph.
-   
-   4th Term: Atom `unweighted` or `d` or `u` or `f` that denotes the type of the edge weights.
-   
-   `unwighted` is for an  unweighted graph.
-   
-   `d` is for decimal integer weights.
-   
-   `u` is for unsigned integer in base 2..36 weights.
-   
-   `f` is for floating point number weights in proper Erlang syntax.
-   
 *  The next M lines will consist of the edge descriptions.
-
    Each line will contain three terms : U, V, W.
-   
    This will denote an edge from U to V with W weight.
    
 How to Compile and Run
