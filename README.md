@@ -25,6 +25,6 @@ How to Compile and Run
   ```erlang
   c(graph),c(graph_lib),c(dijkstra),c(bfs),c(dfs),c(heap),c(demo).
   ```
-  The file e.erl contains a demo. You can view it with ```e:run().```
+  The file demo.erl contains some demos to see the code in action.
 
-*  Or you can compile with `make` from the Unix Shell and run the demo with `erl -noshell -s e run -s init stop`
+*  Or you can compile with `make` from the Unix Shell and run a demo with `erl -noshell -s demo <enter_demo_func> -s init stop`
