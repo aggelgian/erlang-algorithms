@@ -29,7 +29,10 @@ run() ->
   {ok, RootDir} = file:get_cwd(),
   File = RootDir ++ "/test_data/graph1.txt",
   G = graph:new_graph(File),
-  D = dijkstra:run(G, X),
-  B = bfs:run(G,X),
-  io:format("Dijkstra : ~p~n", [D]),
-  io:format("BFS : ~p~n", [B]).
+  Dijkstra = dijkstra:run(G, X),
+  BFS = bfs:run(G,X),
+  DFS = dfs:run(G,X),
+  io:format("Dijkstra : ~p~n", [Dijkstra]),
+  io:format("BFS : ~p~n", [BFS]),
+  io:format("DFS : ~p~n", [DFS]).
+

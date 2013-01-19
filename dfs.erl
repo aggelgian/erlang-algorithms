@@ -18,21 +18,21 @@
 %% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 %%
-%% BFS Algorithm
+%% DFS Algorithm
 %%
 
--module(bfs).
+-module(dfs).
 -export([run/2]).
 
+-type stack() :: [{graph:vertex(), term()}].
 -type states() :: dict().
 -type parents() :: dict().
 
-%% Queue Abstraction
--define(EMPTY_QUEUE(), queue:new()).
--define(IS_EMPTY(Q), queue:is_empty(Q)).
--define(ADD_TO_QUEUE(Node, Cost, Q), queue:in({Node, Cost}, Q)).
--define(FILTER_EXTRACT(R), {erlang:element(2, erlang:element(1, R)), erlang:element(2, R)}).
--define(EXTRACT_FROM_QUEUE(Q), ?FILTER_EXTRACT(queue:out(Q))).
+%% Stack Abstractions
+-define(EMPTY_STACK(), []).
+-define(IS_EMPTY(S), S =:= []).
+-define(ADD_TO_STACK(Node, Cost, S), [{Node, Cost}|S]).
+-define(REMOVE_FROM_STACK(S), {hd(S), tl(S)}).
 %% States Abstractions
 %% State 'A' : not visited
 %% State 'Y' : explored but not added to the result set
@@ -56,8 +56,8 @@
 %% ----------------------------------------------------------
 -spec run(graph:graph(), graph:vertex()) -> lib:paths().
 run(Graph, Root) ->
-  {Q, M, P} = bfs_init(Graph, Root),
-  Result = bfs_step(Graph, Q, M, P),
+  {S, M, P} = dfs_init(Graph, Root),
+  Result = dfs_step(Graph, S, M, P),
   Vertices = graph:vertices(Graph),
   lists:map(
     fun(V) ->
@@ -66,52 +66,49 @@ run(Graph, Root) ->
     end,
     lists:sort(fun erlang:'<'/2, Vertices)
   ).
-
+  
 %% ==========================================================
 %% BFS Functions
 %% ==========================================================
 
--spec bfs_init(graph:graph(), graph:vertex()) -> {queue(), states(), parents()}.
-bfs_init(Graph, Root) ->
-  EQ = ?EMPTY_QUEUE(),
+-spec dfs_init(graph:graph(), graph:vertex()) -> {stack(), states(), parents()}.
+dfs_init(Graph, Root) ->
+  ES = ?EMPTY_STACK(),
   EM = ?EMPTY_STATES(),
   EP = ?EMPTY_PARENTS(),
-  NQ = ?ADD_TO_QUEUE(Root, 0, EQ),
-  NM = ?SET_STATE(Root, 'Y', EM),
+  NS = ?ADD_TO_STACK(Root, 0, ES),
   NP = ?ADD_TO_PARENTS(Root, 0, root, EP),
-  Vs = graph:vertices(Graph) -- [Root],
+  Vs = graph:vertices(Graph),
   NxtM =
     lists:foldl(
       fun(V, M) -> ?SET_STATE(V, 'A', M) end,
-      NM, Vs),
-  {NQ, NxtM, NP}.
-
--spec bfs_step(graph:graph(), queue(), states(), parents()) -> parents().
-bfs_step(Graph, Q, M, P) ->
-  case ?IS_EMPTY(Q) of
+      EM, Vs),
+  {NS, NxtM, NP}.
+  
+-spec dfs_step(graph:graph(), stack(), states(), parents()) -> parents().
+dfs_step(Graph, S, M, P) ->
+  case ?IS_EMPTY(S) of
     true ->
       P;
     false ->
-      {{U, UCost}, NQ} = ?EXTRACT_FROM_QUEUE(Q),
-      NM = ?SET_STATE(U, 'E', M),
-      Neighbours = graph:out_neighbours(Graph, U),
-      {NxtQ, NxtM, NxtP} =
+      {{V, Cost}, NS} = ?REMOVE_FROM_STACK(S),
+      NM = ?SET_STATE(V, 'Y', M),
+      Neighbours = graph:out_neighbours(Graph, V),
+      {NxtP, NxtS} = 
         lists:foldl(
-          fun(V, {FQ, FM, FP}) ->
-            case ?GET_STATE(V, FM) of
+          fun(U, {FP, FS}) ->
+            case ?GET_STATE(U, NM) of
               'A' ->
-                W = graph:edge_weight(Graph, {U, V}),
-                QQ = ?ADD_TO_QUEUE(V, UCost + W, FQ),
-                MM = ?SET_STATE(V, 'Y', FM),
-                PP = ?ADD_TO_PARENTS(V, UCost + W, U, FP),
-                {QQ, MM, PP};
+                W = graph:edge_weight(Graph, {V, U}),
+                SS = ?ADD_TO_STACK(U, Cost + W, FS),
+                PP = ?ADD_TO_PARENTS(U, Cost + W, V, FP),
+                {PP, SS};
               _ ->
-                {FQ, FM, FP}
+                {FP, FS}
             end
           end,
-          {NQ, NM, P},
-          Neighbours
-        ),
-      bfs_step(Graph, NxtQ, NxtM, NxtP)
+          {P, NS}, Neighbours),
+      NxtM = ?SET_STATE(V, 'E', M),
+      dfs_step(Graph, NxtS, NxtM, NxtP)
   end.
-  
+

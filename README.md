@@ -23,7 +23,7 @@ How to Compile and Run
 ----------------------
 *  You can compile everything from within the interpreter with
   ```erlang
-  c(graph),c(graph_lib),c(dijkstra),c(bfs),c(e).
+  c(graph),c(graph_lib),c(dijkstra),c(bfs),c(dfs),c(e).
   ```
   The file e.erl contains a demo. You can view it with ```erlang e:run()```
 
