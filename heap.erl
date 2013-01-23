@@ -53,6 +53,10 @@
 %%   Heap  :: heap()
 %% Creates an empty heap
 %% -----------------------------------------------------------------------
+-spec new(Order) -> Heap
+  when Order :: mode(),
+       Heap :: heap().
+
 new(Order) when Order =:= max; Order=:= min ->
   H = ets:new(?MODULE, [ordered_set, public]),
   ets:insert(H, {length, 0}),
@@ -63,6 +67,9 @@ new(Order) when Order =:= max; Order=:= min ->
 %%   Heap :: heap()
 %% Deletes the heap
 %% -----------------------------------------------------------------------
+-spec delete(Heap) -> true
+  when Heap :: heap().
+
 delete({_Order, H}) ->
   ets:delete(H).
 
@@ -72,6 +79,10 @@ delete({_Order, H}) ->
 %%   Length :: non_neg_integer()
 %% Returns the number of elements that the Heap contains
 %% -----------------------------------------------------------------------
+-spec get_length(Heap) -> Length
+  when Heap :: heap(),
+       Length :: pos_integer().
+
 get_length({_Order, H}) ->
   [{length, L}] = ets:lookup(H, length),
   L.
@@ -82,6 +93,10 @@ get_length({_Order, H}) ->
 %%   Empty :: boolean()
 %% Checks whether Heap is an empty heap or not
 %% -----------------------------------------------------------------------
+-spec is_empty(Heap) -> Empty
+  when Heap :: heap(),
+       Empty :: boolean().
+
 is_empty(H) ->
   get_length(H) =:= 0.
   
@@ -92,6 +107,10 @@ is_empty(H) ->
 %% Returns the element of the heap with the maximum priority.
 %% If Heap is a minimum priority heap, it returns {error, min_heap}
 %% -----------------------------------------------------------------------
+-spec max(Heap) -> Max
+  when Heap :: heap(),
+       Max :: term().
+
 max({max, H}) ->
   case ets:lookup(H, 1) of
     [] ->
@@ -109,6 +128,10 @@ max({min, _H}) ->
 %% Returns the element of the heap with the minimum priority.
 %% If Heap is a maximum priority heap, it returns {error, max_heap}
 %% -----------------------------------------------------------------------
+-spec min(Heap) -> Min
+  when Heap :: heap(),
+       Min :: term().
+       
 min({min, H}) ->
   case ets:lookup(H, 1) of
     [] ->
@@ -128,6 +151,11 @@ min({max, _H}) ->
 %% Add a new element to the Heap and returns a tuple with the element
 %% and a reference so that one can change its priority
 %% -----------------------------------------------------------------------
+-spec insert(Heap, Element) -> {Element, Ref}
+  when Heap :: heap(),
+       Element :: term(),
+       Ref :: reference().
+
 insert({_Order, H}=HO, X) ->
   HS = get_length(HO),
   NHS = HS + 1,
@@ -147,6 +175,10 @@ insert({_Order, H}=HO, X) ->
 %% Deletes and returns the element at the top of the heap
 %% and re-arranges the rest of the heap
 %% -----------------------------------------------------------------------
+-spec delete_head(Heap) -> Head
+  when Heap :: heap(),
+       Head :: term().
+
 delete_head({_Order, H}=HO)->
   case ets:lookup(H, 1) of
     [] ->
@@ -176,6 +208,11 @@ delete_head({_Order, H}=HO)->
 %% Changes the priority of the element referenced with Ref to Value
 %% and then re-arranges the heap
 %% -----------------------------------------------------------------------
+-spec change(Heap, Ref, Priority) -> true
+  when Heap :: heap(),
+       Ref :: reference(),
+       Priority :: term().
+
 change({Order, H}=HO, R, X) ->
   [{R, I}] = ets:lookup(H, R),
   [{I, {OldX, R}}] = ets:lookup(H, I),
@@ -198,6 +235,12 @@ change({Order, H}=HO, R, X) ->
 %%   H       :: heap()
 %%   RefList :: [{non_neg_integer(), referenc()}]
 %% -----------------------------------------------------------------------
+-spec from_list(Order, List) -> {Heap, Refs}
+  when Order :: mode(),
+       List :: [{pos_integer(), term()}],
+       Heap :: heap(),
+       Refs :: [{pos_integer(), reference()}].
+
 from_list(Order, L) when is_list(L) ->
   HS = length(L),
   {HO, Rs} = ets_from_elements(Order, L, HS),
@@ -210,6 +253,11 @@ from_list(Order, L) when is_list(L) ->
 %% =======================================================================
 
 %% Re-arranges the heap in a bottom-up manner
+-spec insert_loop(Heap, I, P) -> ok
+  when Heap :: heap(),
+       I :: pos_integer(),
+       P :: pos_integer().
+
 insert_loop({Order, H}=HO, I, P) when I > 1 ->
   [{I, {X, _RX}}] = ets:lookup(H, I),
   [{P, {Y, _RY}}] = ets:lookup(H, P),
@@ -229,13 +277,24 @@ insert_loop({Order, H}=HO, I, P) when I > 1 ->
   end;
 insert_loop(_HO, _I, _P) -> ok.
 
-  
+
+-spec to_top(Heap, I, Element, Ref) -> ok
+  when Heap :: heap(),
+       I :: pos_integer(),
+       Element :: term(),
+       Ref :: reference().
+
 to_top({_Order, H}=HO, I, X, R) ->
   ets:insert(H, {I, {X, R}}),
   P = I div 2,
   insert_loop(HO, I, P).
 
 %% Re-arranges the heap in a top-down manner
+-spec combine(Heap, I, HS) -> ok
+  when Heap :: heap(),
+       I :: pos_integer(),
+       HS :: pos_integer().
+
 combine(HO, I, HS) ->
   L = 2*I,
   R = 2*I + 1,
@@ -243,6 +302,13 @@ combine(HO, I, HS) ->
   MP_L = combine_h1(HO, L, MP, HS),
   MP_R = combine_h1(HO, R, MP_L, HS),
   combine_h2(HO, MP_R, I, HS).
+  
+-spec combine_h1(Heap, W, MP, HS) -> X
+  when Heap :: heap(),
+       W :: pos_integer(),
+       MP :: pos_integer(),
+       HS :: pos_integer(),
+       X :: pos_integer().
   
 combine_h1({Order, H}, W, MP, HS) when W =< HS ->
   [{W, {X, _RX}}] = ets:lookup(H, W),
@@ -254,11 +320,23 @@ combine_h1({Order, H}, W, MP, HS) when W =< HS ->
   end;
 combine_h1(_HO, _W, MP, _HS) -> MP.
   
+-spec combine_h2(Heap, MP, I, HS) -> ok
+  when Heap :: heap(),
+       MP :: pos_integer(),
+       I :: pos_integer(),
+       HS :: pos_integer().
+  
 combine_h2(_HO, MP, I, _HS) when MP =:= I ->
   ok;
 combine_h2({_Order, H}=HO, MP, I, HS) ->
   swap(H, I, MP),
   combine(HO, MP, HS).
+  
+-spec to_bottom(Heap, I, Element, Ref) -> ok
+  when Heap :: heap(),
+       I :: pos_integer(),
+       Element :: term(),
+       Ref :: reference().
   
 to_bottom({_Order, H}=HO, I, X, R) ->
   ets:insert(H, {I, {X, R}}),
@@ -266,6 +344,11 @@ to_bottom({_Order, H}=HO, I, X, R) ->
   combine(HO, I, HS).
   
 %% Swaps two elements of the heap
+-spec swap(Heap, I, J) -> true
+  when Heap :: heap(),
+       I :: pos_integer(),
+       J :: pos_integer().
+
 swap(H, I, J) ->
   [{I, {X, RX}}] = ets:lookup(H, I),
   [{J, {Y, RY}}] = ets:lookup(H, J),
@@ -275,10 +358,22 @@ swap(H, I, J) ->
   ets:insert(H, {RX, J}).
   
 %% Used for constructing a heap from a list
+-spec construct_heap(Heap, I, HS) -> ok
+  when Heap :: heap(),
+       I :: pos_integer(),
+       HS :: pos_integer().
+
 construct_heap(HO, I, HS) when I > 0 ->
   combine(HO, I, HS),
   construct_heap(HO, I-1, HS);
 construct_heap(_HO, _I, _HS) -> ok.
+  
+-spec ets_from_elements(Order, L, HS) -> {Heap, Refs}
+  when Order :: mode(),
+       L :: [{pos_integer(), term()}],
+       HS :: pos_integer(),
+       Heap :: heap(),
+       Refs :: [{pos_integer(), reference()}].
   
 ets_from_elements(Order, L, HS) ->
   HO = new(Order),
@@ -286,6 +381,12 @@ ets_from_elements(Order, L, HS) ->
   ets:insert(H, {length, HS}),
   Rs = add_elements(HO, L, []),
   {HO, Rs}.  
+  
+-spec add_elements(Heap, L, Acc) -> Refs
+  when Heap :: heap(),
+       L :: [{pos_integer(), term()}],
+       Acc :: [{pos_integer(), reference()}],
+       Refs :: [{pos_integer(), reference()}].
   
 add_elements(_HO, [], Acc) ->
   lists:reverse(Acc);
