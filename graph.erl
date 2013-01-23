@@ -17,21 +17,33 @@
 %% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 %% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+%%
+%% Directed / Undirected Graphs
+%%
+
+%% This module implements directed and undirected graphs that are either weighted or unweighted.
+%% It is basically syntactic sugar for the digraph module with added support for undirected graphs.
+
 -module(graph).
 -export([new_graph/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
-  out_neighbours/2, print_graph/1]).
+  out_neighbours/2, pprint/1]).
 
 -export_type([graph/0, vertex/0, edge/0]).
 
 -type graph() :: digraph().
 -type vertex() :: non_neg_integer() | atom().
 -type edge() :: {vertex(), vertex()}.
+-type graphtype() :: directed | undirected.
+-type weighttype() :: unweighted | d | f.
 
 %% ==========================================================
 %% Exported Functions
 %% ==========================================================
 
--spec new_graph(file:filename()) -> graph().
+-spec new_graph(File) -> Graph
+  when File :: file:filename(),
+       Graph :: graph().
+
 new_graph(File) ->
   {ok, IO} = file:open(File, [read]),
   %% N = Number of Vertices :: non_neg_integer()
@@ -45,29 +57,47 @@ new_graph(File) ->
   ok = init_edges(G, M, IO, T, W),
   G.
   
--spec del_graph(graph()) -> true.
+-spec del_graph(Graph) -> true
+  when Graph :: graph().
+  
 del_graph(G) ->
   digraph:delete(G).
   
--spec vertices(graph()) -> [vertex()].
+-spec vertices(Graph) -> Vertices
+  when Graph :: graph(),
+       Vertices :: [vertex()].
+       
 vertices(G) ->
   digraph:vertices(G).
   
--spec edges(graph()) -> [edge()].
+-spec edges(Graph) -> Edges
+  when Graph :: graph(),
+       Edges :: [edge()].
+       
 edges(G) ->
   digraph:edges(G).
   
--spec edge_weight(graph(), edge()) -> term().
+-spec edge_weight(Graph, Edge) -> Weight
+  when Graph :: graph(),
+       Edge :: edge(),
+       Weight :: term().
+       
 edge_weight(G, E) ->
   {E, _V1, _V2, W} = digraph:edge(G, E),
   W.
   
--spec out_neighbours(graph(), vertex()) -> [vertex()].
+-spec out_neighbours(Graph, Node) -> Neighbours
+  when Graph :: graph(),
+       Node :: vertex(),
+       Neighbours :: [vertex()].
+       
 out_neighbours(G, V) ->
   digraph:out_neighbours(G, V).
   
--spec print_graph(graph()) -> ok.
-print_graph(G) ->
+-spec pprint(Graph) -> ok
+  when Graph :: graph().
+  
+pprint(G) ->
   Vs = digraph:vertices(G),
   F = 
     fun(V) ->
@@ -88,12 +118,24 @@ print_graph(G) ->
 %% ==========================================================
 %% Internal Functions
 %% ==========================================================
-  
+
+-spec init_vertices(Graph, N, V) -> ok
+  when Graph :: graph(),
+       N :: non_neg_integer(),
+       V :: non_neg_integer().
+       
 init_vertices(_G, _N, _N) ->
   ok;
 init_vertices(G, N, V) ->
   digraph:add_vertex(G, V),
   init_vertices(G, N, V+1).
+  
+-spec init_edges(Graph, M, IO, GraphType, WeightType) -> ok
+  when Graph :: graph(),
+       M :: non_neg_integer(),
+       IO :: io:device(),
+       GraphType :: graphtype(),
+       WeightType :: weighttype().
   
 init_edges(_G, 0, _IO, _T, _WT) ->
   ok;
