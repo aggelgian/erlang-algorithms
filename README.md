@@ -21,10 +21,10 @@ The file that contains the graph must have the following format.
    
 How to Compile and Run
 ----------------------
-*  You can compile everything from within the interpreter with
-  ```erlang
-  c(graph),c(graph_lib),c(dijkstra),c(bfs),c(dfs),c(heap),c(demo).
-  ```
-  The file demo.erl contains some demos to see the code in action.
+You can compile everything with `make` from the Unix Shell.
+The file demo.erl contains some functions that demostrate the code in action.
 
-*  Or you can compile with `make` from the Unix Shell and run a demo with `erl -noshell -s demo <enter_demo_func> -s init stop`
+*  demo:min_heaps/0 demonstrates Min Heaps.
+*  demo:max_heaps/0 demonstrates Max Heaps.
+*  demo:graph/0 demonstrates Dijkstra, BFS and DFS algorithms in a graph.
+
