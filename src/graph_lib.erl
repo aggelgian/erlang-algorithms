@@ -22,30 +22,36 @@
 %%
 
 -module(graph_lib).
--export([reconstruct_path/2, reconstruct_path/4]).
+-export([reconstruct_all_paths/2]).
 
--export_type([path/0, paths/0]).
+-export_type([path/0, path_info/0]).
 
 -type path() :: [graph:vertex()].
--type paths() :: [{graph:vertex(), {term(), path()}}].
+-type path_info() :: {graph:vertex(), {term(), path()} | 'unreachable'}.
 
 %% ==========================================================
 %% Exported Functions
 %% ==========================================================
 
 %%% Result :: dict of {Node, {Cost, Prev}}
--spec reconstruct_path(dict(), graph:vertex()) -> paths().
+-spec reconstruct_path(dict(), graph:vertex()) -> path_info().
 reconstruct_path(Result, Node) ->
   try dict:fetch(Node, Result) of
     {Cost, Prev} ->
-      reconstruct_path(Result, Prev, Cost, [Node])
+      {Node, reconstruct_path(Result, Prev, Cost, [Node])}
   catch
     error:badarg ->
-      unreachable
+      {Node, 'unreachable'}
   end.
 
+-spec reconstruct_path(dict(), graph:vertex(), term(), path()) -> {term(), path()}.
 reconstruct_path(_Result, root, Cost, Path) ->
   {Cost, Path};
 reconstruct_path(Result, Node, Cost, Path) ->
   {_, Prev} = dict:fetch(Node, Result),
   reconstruct_path(Result, Prev, Cost, [Node|Path]).
+  
+-spec reconstruct_all_paths([graph:vertex()], dict()) -> [path_info()].
+reconstruct_all_paths(Vertices, Result) ->
+  SortedVs = lists:sort(fun erlang:'<'/2, Vertices),
+  lists:map(fun(V) -> reconstruct_path(Result, V) end, SortedVs).

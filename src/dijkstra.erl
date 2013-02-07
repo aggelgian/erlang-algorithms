@@ -56,18 +56,12 @@
 %%   Root    ::  vertex()
 %%   Result  ::  [{Node, {Cost, Path}}]
 %% ----------------------------------------------------------
--spec run(graph:graph(), graph:vertex()) -> lib:paths().
+-spec run(graph:graph(), graph:vertex()) -> [graph_lib:path_info()].
 run(Graph, Root) ->
   {Heap, Visited, Parents} = dijkstra_init(Root),
   R = dijkstra_step(Graph, Heap, Visited, Parents),
   Vertices = graph:vertices(Graph),
-  lists:map(
-    fun(V) ->
-      Path = graph_lib:reconstruct_path(R, V),
-      {V, Path}
-    end,
-    lists:sort(fun erlang:'<'/2, Vertices)
-  ).
+  graph_lib:reconstruct_all_paths(Vertices, R).
 
 %% ==========================================================
 %% Dijkstra Functions

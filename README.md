@@ -21,10 +21,12 @@ The file that contains the graph must have the following format.
    
 How to Compile and Run
 ----------------------
-You can compile everything with `make` from the Unix Shell.
-The file demo.erl contains some functions that demostrate the code in action.
+*  Compile the source code and the demo : `make`
+*  Run dialyzer : `make dialyze`
+*  All of the above : `make all`
 
-*  demo:min_heaps/0 demonstrates Min Heaps.
-*  demo:max_heaps/0 demonstrates Max Heaps.
-*  demo:graph/0 demonstrates Dijkstra, BFS and DFS algorithms in a graph.
+The file demo.erl contains some functions that demostrate the code in action.
+*  demo:min_heaps/0 demonstrates Min Heaps (`erl -pa ebin -eval "demo:min_heaps()" -s init stop`)
+*  demo:max_heaps/0 demonstrates Max Heaps (`erl -pa ebin -eval "demo:max_heaps()" -s init stop`)
+*  demo:graph/0 demonstrates Dijkstra, BFS and DFS algorithms in a graph (`erl -pa ebin -eval "demo:graph()" -s init stop`)
 
