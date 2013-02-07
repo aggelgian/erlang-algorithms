@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Module heap</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module heap</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Min-Heap, Max-Heap for Priority Queues.
+<p>Copyright © 2013 Aggelos Giantsios</p>
+
+<p><b>Authors:</b> Aggelos Giantsios.</p>
+
+<h2><a name="description">Description</a></h2><p>Min-Heap, Max-Heap for Priority Queues</p>
+ 
+ 
+  <p>This module implements min-heaps and max-heaps for use in priority queues.  
+Each value in the heap is assosiated with a reference so that  
+the user can change its priority in O(log n).</p>
+ 
+  The implementation is based on ETS tables for the O(1) lookup time.
+  It supports all the basic heap operations:
+  <ul>
+    <li><code>min/1</code>, <code>max/1</code> in O(1)</li>
+    <li><code>take_min/1</code>, <code>take_max/1</code> in O(log n)</li>
+    <li><code>insert/2</code> in O(log n)</li>
+    <li><code>update/3</code> in O(log n)</li>
+    <li><code>from_list/2</code> in O(n)</li>
+  </ul>
+ 
+  <p>In order to achieve the above complexities the heap needs to store
+  an extra tuple <code>{Key, Reference}</code> for every
+  <code>Key</code> stored. In addition, the size of the heap is
+  stored as a tuple <code>{size, Size}</code>.</p>
+ 
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-heap">heap()</a></h3>
+<p><b>abstract datatype</b>: <tt>heap()</tt></p>
+<p>Min / Max Heap.
+ </p>
+
+<h3 class="typedecl"><a name="type-mode">mode()</a></h3>
+<p><tt>mode() = max | min</tt></p>
+
+
+<h3 class="typedecl"><a name="type-refterm">refterm()</a></h3>
+<p><tt>refterm() = {term(), reference()}</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Deletes a heap.</td></tr>
+<tr><td valign="top"><a href="#from_list-2">from_list/2</a></td><td>Create a heap from a list of terms.</td></tr>
+<tr><td valign="top"><a href="#heap_size-1">heap_size/1</a></td><td>Returns the number of elements contained in a heap.</td></tr>
+<tr><td valign="top"><a href="#insert-2">insert/2</a></td><td>Add a new element to a heap.</td></tr>
+<tr><td valign="top"><a href="#is_empty-1">is_empty/1</a></td><td>Checks whether a heap is empty or not.</td></tr>
+<tr><td valign="top"><a href="#max-1">max/1</a></td><td>Returns the element of a max heap with the maximum priority.</td></tr>
+<tr><td valign="top"><a href="#min-1">min/1</a></td><td>Returns the element of a min heap with the minimum priority.</td></tr>
+<tr><td valign="top"><a href="#new-1">new/1</a></td><td>Creates an empty heap.</td></tr>
+<tr><td valign="top"><a href="#take_max-1">take_max/1</a></td><td>Removes and returns the maximum priority element of a max heap.</td></tr>
+<tr><td valign="top"><a href="#take_min-1">take_min/1</a></td><td>Removes and returns the minimum priority element of a min heap.</td></tr>
+<tr><td valign="top"><a href="#to_list-1">to_list/1</a></td><td>Returns a list of the terms in a heap.</td></tr>
+<tr><td valign="top"><a href="#update-3">update/3</a></td><td>Change the priority of an element.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="delete-1">delete/1</a></h3>
+<div class="spec">
+<p><tt>delete(H::<a href="#type-heap">heap()</a>) -&gt; true</tt><br></p>
+</div><p>Deletes a heap.</p>
+
+<h3 class="function"><a name="from_list-2">from_list/2</a></h3>
+<div class="spec">
+<p><tt>from_list(M::<a href="#type-mode">mode()</a>, L::[term()]) -&gt; {<a href="#type-heap">heap()</a>, [<a href="#type-refterm">refterm()</a>]}</tt><br></p>
+</div><p>Create a heap from a list of terms.
+  <p>It returns the heap and a list of tuples <code>{Key, Ref}</code>
+  where <code>Key</code> is the term that was added and <code>Ref</code>
+  is its reference (used to change its priority).</p></p>
+
+<h3 class="function"><a name="heap_size-1">heap_size/1</a></h3>
+<div class="spec">
+<p><tt>heap_size(H::<a href="#type-heap">heap()</a>) -&gt; non_neg_integer()</tt><br></p>
+</div><p>Returns the number of elements contained in a heap.</p>
+
+<h3 class="function"><a name="insert-2">insert/2</a></h3>
+<div class="spec">
+<p><tt>insert(H::<a href="#type-heap">heap()</a>, X::term()) -&gt; <a href="#type-refterm">refterm()</a></tt><br></p>
+</div><p>Add a new element to a heap.
+  <p>It returns a tuple with the element added and a reference
+  so that one can change its priority.</p></p>
+
+<h3 class="function"><a name="is_empty-1">is_empty/1</a></h3>
+<div class="spec">
+<p><tt>is_empty(H::<a href="#type-heap">heap()</a>) -&gt; boolean()</tt><br></p>
+</div><p>Checks whether a heap is empty or not.</p>
+
+<h3 class="function"><a name="max-1">max/1</a></h3>
+<div class="spec">
+<p><tt>max(H::<a href="#type-heap">heap()</a>) -&gt; term() | {error, min_heap | empty_heap}</tt><br></p>
+</div><p>Returns the element of a max heap with the maximum priority.
+  <p>If it is a min heap, it returns <code>{error, min_heap}</code>.</p></p>
+
+<h3 class="function"><a name="min-1">min/1</a></h3>
+<div class="spec">
+<p><tt>min(H::<a href="#type-heap">heap()</a>) -&gt; term() | {error, max_heap | empty_heap}</tt><br></p>
+</div><p>Returns the element of a min heap with the minimum priority.
+  <p>If it is a max heap, it returns <code>{error, max_heap}</code>.</p></p>
+
+<h3 class="function"><a name="new-1">new/1</a></h3>
+<div class="spec">
+<p><tt>new(M::<a href="#type-mode">mode()</a>) -&gt; <a href="#type-heap">heap()</a></tt><br></p>
+</div><p>Creates an empty heap.
+  <p>If <code>M</code> is <code>max</code> then it will be a max heap,
+  else if <code>M</code> is <code>min</code> it will be a min heap.</p></p>
+
+<h3 class="function"><a name="take_max-1">take_max/1</a></h3>
+<div class="spec">
+<p><tt>take_max(H::<a href="#type-heap">heap()</a>) -&gt; term() | {error, min_heap | empty_heap}</tt><br></p>
+</div><p>Removes and returns the maximum priority element of a max heap.</p>
+
+<h3 class="function"><a name="take_min-1">take_min/1</a></h3>
+<div class="spec">
+<p><tt>take_min(H::<a href="#type-heap">heap()</a>) -&gt; term() | {error, max_heap | empty_heap}</tt><br></p>
+</div><p>Removes and returns the minimum priority element of a min heap.</p>
+
+<h3 class="function"><a name="to_list-1">to_list/1</a></h3>
+<div class="spec">
+<p><tt>to_list(H::<a href="#type-heap">heap()</a>) -&gt; [term()]</tt><br></p>
+</div><p>Returns a list of the terms in a heap.</p>
+
+<h3 class="function"><a name="update-3">update/3</a></h3>
+<div class="spec">
+<p><tt>update(H::<a href="#type-heap">heap()</a>, Ref::reference(), X::term()) -&gt; true</tt><br></p>
+</div><p>Change the priority of an element.
+  <p>It changes the priority of the element referenced with
+  <code>Ref</code> to <code>Value</code> and then re-arranges the heap.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Feb 8 2013, 01:22:25.</i></p>
+</body>
+</html>
