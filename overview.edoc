@@ -1,0 +1,20 @@
+@author Aggelos Giantsios
+@copyright 2013 Aggelos Giantsios
+@title Welcome to erlang-algorithms!
+@doc The goal of this project is to implement some useful algorithms and data structures in Erlang so as to help anyone who may need them.
+
+== Currently Implemented Data Structures ==
+<ul>
+  <li><a href="graph.html">Directed, Undirected, Weighted, Unweighted Graphs</a></li>
+  <li>Min / Max Heaps</li>
+  <li>Union / Find</li>
+</ul>
+
+== Currently Implemented Algorithms ==
+<ul>
+  <li>BFS</li>
+  <li>DFS</li>
+  <li>Dijkstra</li>
+  <li>Kruskal</li>
+</ul>
+
