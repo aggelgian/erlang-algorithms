@@ -8,7 +8,7 @@ The goal of this project is to implement some useful algorithms and dat structur
 *  Currently Implemented Data Structures:
 	*  Directed, Undirected, Weighted, Unweighted Graphs
 	*  Min / Max Heaps
-
+	*  Union / Find
 
 *  Currently Implemented Algorithms:
 	*  BFS
@@ -41,5 +41,6 @@ How to Compile and Run
 The file demo.erl contains some functions that demostrate the code in action.
 *  demo:min_heaps/0 demonstrates Min Heaps (`erl -pa ebin -eval "demo:min_heaps()" -s init stop`)
 *  demo:max_heaps/0 demonstrates Max Heaps (`erl -pa ebin -eval "demo:max_heaps()" -s init stop`)
+*  demo:union_find/0 demonstrates Union / Find (`erl -pa ebin -eval "demo:union_find()" -s init stop`)
 *  demo:graph/0 demonstrates Dijkstra, BFS and DFS algorithms in a graph (`erl -pa ebin -eval "demo:graph()" -s init stop`)
 

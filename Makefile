@@ -15,6 +15,7 @@ SRC_MODULES = \
 	bfs \
 	dfs \
 	heap \
+	union_find \
 	demo
 
 TARGETS = \

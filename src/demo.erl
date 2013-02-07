@@ -1,7 +1,7 @@
 -module(demo).
 -compile(export_all).
 
--spec min_heaps() -> 'demo_ok'.
+-spec min_heaps() -> 'true'.
 min_heaps() ->
   %% Creating a new min-heap
   H = heap:new(min),
@@ -37,9 +37,9 @@ min_heaps() ->
   L = [{1,6},{2,9},{3,3},{4,12}],
   {H2, _R} = heap:from_list(min, L),
   true = heap:delete(H2),
-  'demo_ok'.
+  erlang:display('demo_ok').
   
--spec max_heaps() -> 'demo_ok'.
+-spec max_heaps() -> 'true'.
 max_heaps() ->
   %% Creating a new max-heap
   H = heap:new(max),
@@ -75,9 +75,9 @@ max_heaps() ->
   L = [{1,6},{2,9},{3,3},{4,12}],
   {H2, _R} = heap:from_list(max, L),
   true = heap:delete(H2),
-  'demo_ok'.
+  erlang:display('demo_ok').
   
--spec graph() -> 'ok'.
+-spec graph() -> 'true'.
 graph() ->
   X = 0,
   {'ok', RootDir} = file:get_cwd(),
@@ -88,4 +88,27 @@ graph() ->
   DFS = dfs:run(G,X),
   io:format("Dijkstra : ~p~n", [Dijkstra]),
   io:format("BFS : ~p~n", [BFS]),
-  io:format("DFS : ~p~n", [DFS]).
+  io:format("DFS : ~p~n", [DFS]),
+  erlang:display('demo_ok').
+  
+-spec union_find() -> 'true'.
+union_find() ->
+  L = [a,b,c,d,e,f,g,h,i,j],
+  F = union_find:singletons_from_list(L),
+%%  union_find:pprint(F),
+  10 = union_find:number_of_sets(F),
+  'true' = union_find:union(F, a, e),
+%%  union_find:pprint(F),
+  'true' = union_find:union(F, a, d),
+%%  union_find:pprint(F),
+  'true' = union_find:union(F, g, i),
+%%  union_find:pprint(F),
+  'true' = union_find:union(F, h, f),
+%%  union_find:pprint(F),
+  6 = union_find:number_of_sets(F),
+  [a,d,e] = lists:sort(union_find:set_elements(F, e)),
+  g = union_find:find(F, i),
+  3 = union_find:set_size(F, e),
+  'true' = union_find:delete(F),
+  erlang:display('demo_ok').
+  
