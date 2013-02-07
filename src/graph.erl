@@ -28,13 +28,15 @@
 
 %% External Exports
 -export([new_graph/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
-         out_neighbours/2, pprint/1]).
+         edges_with_weights/1, out_neighbours/2, num_of_vertices/1,
+         num_of_edges/1, pprint/1]).
 
 %% Exported Types
 -export_type([graph/0, vertex/0, edge/0]).
 
 %% Types Declarations
--type graph()  :: digraph().
+-record(graph, {type :: graphtype(), graph :: digraph()}).
+-type graph()  :: #graph{}.
 -type vertex() :: non_neg_integer() | atom().
 -type edge()   :: {vertex(), vertex()}.
 -type graphtype()  :: 'directed' | 'undirected'.
@@ -58,50 +60,77 @@ new_graph(File) ->
   %% 3rd Argument is the number of the first vertex
   'ok' = init_vertices(G, N, 0),
   'ok' = init_edges(G, M, IO, T, W),
-  G.
+  #graph{type=T, graph=G}.
   
 %% Delete a graph
 -spec del_graph(graph()) -> 'true'.
   
 del_graph(G) ->
-  digraph:delete(G).
+  digraph:delete(G#graph.graph).
   
 %% Get the vertices of a graph
 -spec vertices(graph()) -> [vertex()].
   
 vertices(G) ->
-  digraph:vertices(G).
+  digraph:vertices(G#graph.graph).
+
+%% Return the number of vertices in a graph
+-spec num_of_vertices(graph()) -> non_neg_integer().
+  
+num_of_vertices(G) ->
+  Vs = vertices(G),
+  length(Vs).
   
 %% Get the edges of a graph
 -spec edges(graph()) -> [edge()].
   
 edges(G) ->
-  digraph:edges(G).
+  Es = digraph:edges(G#graph.graph),
+  case G#graph.type of
+    'directed' ->
+      Es;
+    'undirected' ->
+      remove_duplicate_edges(Es, [])
+  end.
+  
+%% Return the number of edges in a graph
+-spec num_of_edges(graph()) -> non_neg_integer().
+  
+num_of_edges(G) ->
+  Es = edges(G),
+  length(Es).
   
 %% Get the weight of an edge
 -spec edge_weight(graph(), edge()) -> term().
   
 edge_weight(G, E) ->
-  {E, _V1, _V2, W} = digraph:edge(G, E),
+  {E, _V1, _V2, W} = digraph:edge(G#graph.graph, E),
   W.
+  
+%% Get the edges of a graph along with their weights
+-spec edges_with_weights(graph()) -> [{edge(), term()}].
+  
+edges_with_weights(G) ->
+  Es = edges(G),
+  lists:map(fun(E) -> {E, edge_weight(G, E)} end, Es).
   
 %% Get the out neighbours of a vertex
 -spec out_neighbours(graph(), vertex()) -> [vertex()].
   
 out_neighbours(G, V) ->
-  digraph:out_neighbours(G, V).
+  digraph:out_neighbours(G#graph.graph, V).
   
 %% Pretty print a graph
 -spec pprint(graph()) -> 'ok'.
   
 pprint(G) ->
-  Vs = digraph:vertices(G),
+  Vs = digraph:vertices(G#graph.graph),
   F = 
     fun(V) ->
-      Es = digraph:out_edges(G, V),
+      Es = digraph:out_edges(G#graph.graph, V),
       Ns = lists:map(
         fun(E) -> 
-          {E, _V1, V2, W} = digraph:edge(G, E),
+          {E, _V1, V2, W} = digraph:edge(G#graph.graph, E),
           {V2, W}
         end, 
         Es),
@@ -117,7 +146,7 @@ pprint(G) ->
 %% ==========================================================
 
 %% Initialize the vertices of the graph
--spec init_vertices(graph(), non_neg_integer(), non_neg_integer()) -> 'ok'.
+-spec init_vertices(digraph(), non_neg_integer(), non_neg_integer()) -> 'ok'.
   
 init_vertices(_G, _N, _N) ->
   ok;
@@ -126,11 +155,11 @@ init_vertices(G, N, V) ->
   init_vertices(G, N, V+1).
   
 %% Initialize the edges of the graph
--spec init_edges(graph(), non_neg_integer(), file:io_device(), graphtype(), weighttype()) -> 'ok'.
+-spec init_edges(digraph(), non_neg_integer(), file:io_device(), graphtype(), weighttype()) -> 'ok'.
   
 init_edges(_G, 0, _IO, _T, _WT) ->
   'ok';
-init_edges(G, M, IO, T, unweighted) ->
+init_edges(G, M, IO, T, 'unweighted') ->
   {'ok', [V1, V2]} = io:fread(IO, ">", "~d ~d"),
   case T of
     directed ->
@@ -139,7 +168,7 @@ init_edges(G, M, IO, T, unweighted) ->
       digraph:add_edge(G, {V1, V2}, V1, V2, 1),
       digraph:add_edge(G, {V2, V1}, V2, V1, 1)
   end,
-  init_edges(G, M-1, IO, T, unweighted);
+  init_edges(G, M-1, IO, T, 'unweighted');
 init_edges(G, M, IO, T, WT) ->
   Format = "~d ~d ~" ++ atom_to_list(WT),
   {'ok', [V1, V2, W]} = io:fread(IO, ">", Format),
@@ -151,4 +180,10 @@ init_edges(G, M, IO, T, WT) ->
       digraph:add_edge(G, {V2, V1}, V2, V1, W)
   end,
   init_edges(G, M-1, IO, T, WT).
+  
+-spec remove_duplicate_edges([edge()], [edge()]) -> [edge()].
+remove_duplicate_edges([], Acc) ->
+  Acc;
+remove_duplicate_edges([{From, To}=E|Es], Acc) ->
+  remove_duplicate_edges(Es -- [{To, From}], [E|Acc]).
   
