@@ -22,10 +22,14 @@
 %%
 
 -module(graph_lib).
+
+%% External Exports
 -export([reconstruct_all_paths/2]).
 
+%% Exported Types
 -export_type([path/0, path_info/0]).
 
+%% Types Declarations
 -type path() :: [graph:vertex()].
 -type path_info() :: {graph:vertex(), {term(), path()} | 'unreachable'}.
 
@@ -33,8 +37,25 @@
 %% Exported Functions
 %% ==========================================================
 
-%%% Result :: dict of {Node, {Cost, Prev}}
+%% Reconstruct all the path information from a graph algorithm's result
+%% (Algorithms included: Dijkstra, DFS, BFS)
+-spec reconstruct_all_paths([graph:vertex()], dict()) -> [path_info()].
+
+reconstruct_all_paths(Vertices, Result) ->
+  SortedVs = lists:sort(fun erlang:'<'/2, Vertices),
+  lists:map(fun(V) -> reconstruct_path(Result, V) end, SortedVs).
+  
+%% ==========================================================
+%% Internal Functions
+%% ==========================================================
+
+%% ----------------------------------------------------------
+%% Helper functions to reconstruct a path
+%% ----------------------------------------------------------
+
+%% Result :: dict of {Node, {Cost, Prev}}
 -spec reconstruct_path(dict(), graph:vertex()) -> path_info().
+
 reconstruct_path(Result, Node) ->
   try dict:fetch(Node, Result) of
     {Cost, Prev} ->
@@ -45,13 +66,11 @@ reconstruct_path(Result, Node) ->
   end.
 
 -spec reconstruct_path(dict(), graph:vertex(), term(), path()) -> {term(), path()}.
+
 reconstruct_path(_Result, root, Cost, Path) ->
   {Cost, Path};
 reconstruct_path(Result, Node, Cost, Path) ->
   {_, Prev} = dict:fetch(Node, Result),
   reconstruct_path(Result, Prev, Cost, [Node|Path]).
   
--spec reconstruct_all_paths([graph:vertex()], dict()) -> [path_info()].
-reconstruct_all_paths(Vertices, Result) ->
-  SortedVs = lists:sort(fun erlang:'<'/2, Vertices),
-  lists:map(fun(V) -> reconstruct_path(Result, V) end, SortedVs).
+

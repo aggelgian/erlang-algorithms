@@ -25,77 +25,74 @@
 %% It is basically syntactic sugar for the digraph module with added support for undirected graphs.
 
 -module(graph).
--export([new_graph/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
-  out_neighbours/2, pprint/1]).
 
+%% External Exports
+-export([new_graph/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
+         out_neighbours/2, pprint/1]).
+
+%% Exported Types
 -export_type([graph/0, vertex/0, edge/0]).
 
--type graph() :: digraph().
+%% Types Declarations
+-type graph()  :: digraph().
 -type vertex() :: non_neg_integer() | atom().
--type edge() :: {vertex(), vertex()}.
--type graphtype() :: directed | undirected.
--type weighttype() :: unweighted | d | f.
+-type edge()   :: {vertex(), vertex()}.
+-type graphtype()  :: 'directed' | 'undirected'.
+-type weighttype() :: 'unweighted' | 'd' | 'f'.
 
 %% ==========================================================
 %% Exported Functions
 %% ==========================================================
 
--spec new_graph(File) -> Graph
-  when File :: file:filename(),
-       Graph :: graph().
+%% Create a new graph from a file
+-spec new_graph(file:name()) -> graph().
 
 new_graph(File) ->
-  {ok, IO} = file:open(File, [read]),
+  {'ok', IO} = file:open(File, ['read']),
   %% N = Number of Vertices :: non_neg_integer()
   %% M = Number of Edges :: non_neg_integer()
   %% T = Graph Type :: directed | undirected
-  %% W = Edge Weight weighted :: Weight Type (see fread sequences) | unweighted
-  {ok, [N, M, T, W]} = io:fread(IO, ">", "~d ~d ~a ~a"),
+  %% W = Edge Weight weighted :: Weight Type (d | f) | unweighted
+  {'ok', [N, M, T, W]} = io:fread(IO, ">", "~d ~d ~a ~a"),
   G = digraph:new(),
   %% 3rd Argument is the number of the first vertex
-  ok = init_vertices(G, N, 0),
-  ok = init_edges(G, M, IO, T, W),
+  'ok' = init_vertices(G, N, 0),
+  'ok' = init_edges(G, M, IO, T, W),
   G.
   
--spec del_graph(Graph) -> true
-  when Graph :: graph().
+%% Delete a graph
+-spec del_graph(graph()) -> 'true'.
   
 del_graph(G) ->
   digraph:delete(G).
   
--spec vertices(Graph) -> Vertices
-  when Graph :: graph(),
-       Vertices :: [vertex()].
-       
+%% Get the vertices of a graph
+-spec vertices(graph()) -> [vertex()].
+  
 vertices(G) ->
   digraph:vertices(G).
   
--spec edges(Graph) -> Edges
-  when Graph :: graph(),
-       Edges :: [edge()].
-       
+%% Get the edges of a graph
+-spec edges(graph()) -> [edge()].
+  
 edges(G) ->
   digraph:edges(G).
   
--spec edge_weight(Graph, Edge) -> Weight
-  when Graph :: graph(),
-       Edge :: edge(),
-       Weight :: term().
-       
+%% Get the weight of an edge
+-spec edge_weight(graph(), edge()) -> term().
+  
 edge_weight(G, E) ->
   {E, _V1, _V2, W} = digraph:edge(G, E),
   W.
   
--spec out_neighbours(Graph, Node) -> Neighbours
-  when Graph :: graph(),
-       Node :: vertex(),
-       Neighbours :: [vertex()].
-       
+%% Get the out neighbours of a vertex
+-spec out_neighbours(graph(), vertex()) -> [vertex()].
+  
 out_neighbours(G, V) ->
   digraph:out_neighbours(G, V).
   
--spec pprint(Graph) -> ok
-  when Graph :: graph().
+%% Pretty print a graph
+-spec pprint(graph()) -> 'ok'.
   
 pprint(G) ->
   Vs = digraph:vertices(G),
@@ -119,28 +116,22 @@ pprint(G) ->
 %% Internal Functions
 %% ==========================================================
 
--spec init_vertices(Graph, N, V) -> ok
-  when Graph :: graph(),
-       N :: non_neg_integer(),
-       V :: non_neg_integer().
-       
+%% Initialize the vertices of the graph
+-spec init_vertices(graph(), non_neg_integer(), non_neg_integer()) -> 'ok'.
+  
 init_vertices(_G, _N, _N) ->
   ok;
 init_vertices(G, N, V) ->
   digraph:add_vertex(G, V),
   init_vertices(G, N, V+1).
   
--spec init_edges(Graph, M, IO, GraphType, WeightType) -> ok
-  when Graph :: graph(),
-       M :: non_neg_integer(),
-       IO :: io:device(),
-       GraphType :: graphtype(),
-       WeightType :: weighttype().
+%% Initialize the edges of the graph
+-spec init_edges(graph(), non_neg_integer(), file:io_device(), graphtype(), weighttype()) -> 'ok'.
   
 init_edges(_G, 0, _IO, _T, _WT) ->
-  ok;
+  'ok';
 init_edges(G, M, IO, T, unweighted) ->
-  {ok, [V1, V2]} = io:fread(IO, ">", "~d ~d"),
+  {'ok', [V1, V2]} = io:fread(IO, ">", "~d ~d"),
   case T of
     directed ->
       digraph:add_edge(G, {V1, V2}, V1, V2, 1);
@@ -151,7 +142,7 @@ init_edges(G, M, IO, T, unweighted) ->
   init_edges(G, M-1, IO, T, unweighted);
 init_edges(G, M, IO, T, WT) ->
   Format = "~d ~d ~" ++ atom_to_list(WT),
-  {ok, [V1, V2, W]} = io:fread(IO, ">", Format),
+  {'ok', [V1, V2, W]} = io:fread(IO, ">", Format),
   case T of
     directed ->
       digraph:add_edge(G, {V1, V2}, V1, V2, W);
@@ -160,3 +151,4 @@ init_edges(G, M, IO, T, WT) ->
       digraph:add_edge(G, {V2, V1}, V2, V1, W)
   end,
   init_edges(G, M-1, IO, T, WT).
+  
