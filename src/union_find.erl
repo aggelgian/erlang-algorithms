@@ -27,13 +27,13 @@
 %% *  Union/3 in O(1)
 %% *  Find/2 in ammortized O(m α(n, m)) where m >= n finds
 %%    and n unions and α(n, m) is the reverse Ackermann function (practically O(m))
-%% *  singletons_from_list/1 in O(n)
+%% *  singletons_from_list/1, singletons_from_list/2 in O(n)
 
 -module(union_find).
 
 %% External Exports
--export([singletons_from_list/1, union/3, find/2, delete/1,
-         number_of_sets/1, set_size/2, set_elements/2, pprint/1]).
+-export([singletons_from_list/1, singletons_from_list/2, union/3, find/2,
+         delete/1, number_of_sets/1, set_size/2, set_elements/2, pprint/1]).
 
 %% Exported Types
 -export_type([uf_forest/0]).
@@ -59,18 +59,29 @@
 singletons_from_list([]) ->
   erlang:error('badarg');
 singletons_from_list(L) when is_list(L) ->
-  singletons_from_list(L, ets:new(?MODULE, ['ordered_set']));
+  singletons_from_list(fun id/1, L, ets:new(?MODULE, ['ordered_set']));
 singletons_from_list(_L) ->
   erlang:error('badarg').
   
-%% Helper function singletons_from_list/2
--spec singletons_from_list([term()], uf_forest()) -> uf_forest().
+%% Create a forest of singleton sets from a list of terms
+%% but applies Fun to each term before adding it
+-spec singletons_from_list(function(), [term(), ...]) -> uf_forest().
+
+singletons_from_list(_Fun, []) ->
+  erlang:error('badarg');
+singletons_from_list(Fun, L) when is_list(L), is_function(Fun) ->
+  singletons_from_list(Fun, L, ets:new(?MODULE, ['ordered_set']));
+singletons_from_list(_Fun, _L) ->
+  erlang:error('badarg').
   
-singletons_from_list([], Forest) ->
+%% Helper function singletons_from_list/3
+-spec singletons_from_list(function(), [term()], uf_forest()) -> uf_forest().
+  
+singletons_from_list(_Fun, [], Forest) ->
   Forest;
-singletons_from_list([I|Is], Forest) ->
-  ets:insert(Forest, {I, {'root', 1}}),
-  singletons_from_list(Is, Forest).
+singletons_from_list(Fun, [I|Is], Forest) ->
+  ets:insert(Forest, {Fun(I), {'root', 1}}),
+  singletons_from_list(Fun, Is, Forest).
   
 %% Union of two sets (need the parent elements for this)
 -spec union(uf_forest(), term(), term()) -> uf_union().
@@ -155,4 +166,7 @@ pprint_sets(Forest, [E|_]=All) ->
   SetEs = set_elements(Forest, E),
   io:format("Elements: ~w~n", [SetEs]),
   pprint_sets(Forest, All -- SetEs).
+  
+-spec id(term()) -> term().
+id(Arg) -> Arg.
 
