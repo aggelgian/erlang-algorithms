@@ -22,11 +22,18 @@
 %%
 
 -module(dfs).
+
+%% External Exports
 -export([run/2]).
 
--type stack() :: [{graph:vertex(), term()}].
--type states() :: dict().
+%% Types Declarations
+-type stack()   :: [{graph:vertex(), term()}].
+-type states()  :: dict().
 -type parents() :: dict().
+
+%% ----------------------------------------------------------
+%% DFS Abstractions
+%% ----------------------------------------------------------
 
 %% Stack Abstractions
 -define(EMPTY_STACK(), []).
@@ -65,13 +72,14 @@ run(Graph, Root) ->
 %% BFS Functions
 %% ==========================================================
 
+%% Initialize data structures
 -spec dfs_init(graph:graph(), graph:vertex()) -> {stack(), states(), parents()}.
 dfs_init(Graph, Root) ->
   ES = ?EMPTY_STACK(),
   EM = ?EMPTY_STATES(),
   EP = ?EMPTY_PARENTS(),
   NS = ?ADD_TO_STACK(Root, 0, ES),
-  NP = ?ADD_TO_PARENTS(Root, 0, root, EP),
+  NP = ?ADD_TO_PARENTS(Root, 0, 'root', EP),
   Vs = graph:vertices(Graph),
   NxtM =
     lists:foldl(
@@ -79,12 +87,13 @@ dfs_init(Graph, Root) ->
       EM, Vs),
   {NS, NxtM, NP}.
   
+%% DFS loop
 -spec dfs_step(graph:graph(), stack(), states(), parents()) -> parents().
 dfs_step(Graph, S, M, P) ->
   case ?IS_EMPTY(S) of
-    true ->
+    'true' ->
       P;
-    false ->
+    'false' ->
       {{V, Cost}, NS} = ?REMOVE_FROM_STACK(S),
       NM = ?SET_STATE(V, 'Y', M),
       Neighbours = graph:out_neighbours(Graph, V),

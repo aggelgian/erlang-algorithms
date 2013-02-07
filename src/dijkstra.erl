@@ -22,12 +22,18 @@
 %%
 
 -module(dijkstra).
+
+%% External Exports
 -export([run/2]).
 
+%% Types Declarations
 -type open_set() :: gb_tree().
 -type closed_set() :: dict().
 -type parents() :: dict().
 
+%% ----------------------------------------------------------
+%% Dijkstra Abstractions
+%% ----------------------------------------------------------
 
 %% Graph Abstractions
 -define(EDGE_WEIGHT(Graph, Edge), graph:edge_weight(Graph, Edge)).
@@ -41,7 +47,7 @@
 %% Visited (Closed Set) Abstractions
 -define(EMPTY_VISITED, dict:new()).
 -define(IS_VISITED(V, Visited), dict:is_key(V, Visited)).
--define(ADD_TO_VISITED(Node, OldVisited), dict:store(Node, true, OldVisited)).
+-define(ADD_TO_VISITED(Node, OldVisited), dict:store(Node, 'true', OldVisited)).
 %% Parents Abstractions
 -define(EMPTY_PARENTS, dict:new()).
 -define(ADD_TO_PARENTS(Node, Cost, Prev, P), dict:store(Node, {Cost, Prev}, P)).
@@ -70,7 +76,7 @@ run(Graph, Root) ->
 %% Initalize Heap (Open Set), Visited (Closed Set), Parents
 -spec dijkstra_init(graph:vertex()) -> {open_set(), closed_set(), parents()}.
 dijkstra_init(Root) ->
-  Heap = ?INSERT_NODE_TO_HEAP(Root, root, 0, ?EMPTY_HEAP),
+  Heap = ?INSERT_NODE_TO_HEAP(Root, 'root', 0, ?EMPTY_HEAP),
   Visited = ?EMPTY_VISITED,
   Parents = ?EMPTY_PARENTS,
   {Heap, Visited, Parents}.
@@ -79,14 +85,14 @@ dijkstra_init(Root) ->
 -spec dijkstra_step(graph:graph(), open_set(), closed_set(), parents()) -> parents().
 dijkstra_step(Graph, Heap, Visited, Parents) ->
   case ?IS_EMPTY_HEAP(Heap) of
-    true ->
+    'true' ->
       Parents;
-    false ->
+    'false' ->
       {Cost, Node, Prev, NewHeap} = ?GET_MIN_HEAP(Heap),
       case ?IS_VISITED(Node, Visited) of
-        true ->
+        'true' ->
           dijkstra_step(Graph, NewHeap, Visited, Parents);
-        false ->
+        'false' ->
           NewParents = ?ADD_TO_PARENTS(Node, Cost, Prev, Parents),
           NewVisited = ?ADD_TO_VISITED(Node, Visited),
           AdjList = ?GET_NEIGHBOURS(Node, Graph),
@@ -94,9 +100,9 @@ dijkstra_step(Graph, Heap, Visited, Parents) ->
             lists:foldl(
               fun(V,  H) ->
                 case ?IS_VISITED(V, NewVisited) of
-                  true ->
+                  'true' ->
                     H;
-                  false ->
+                  'false' ->
                     Edge = {Node, V},
                     Weight = ?EDGE_WEIGHT(Graph, Edge),
                     ?INSERT_NODE_TO_HEAP(V, Node, Cost + Weight, H)

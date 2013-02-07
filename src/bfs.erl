@@ -22,10 +22,17 @@
 %%
 
 -module(bfs).
+
+%% External Exports
 -export([run/2]).
 
--type states() :: dict().
+%% Types Declarations
+-type states()  :: dict().
 -type parents() :: dict().
+
+%% ----------------------------------------------------------
+%% BFS Abstractions
+%% ----------------------------------------------------------
 
 %% Queue Abstraction
 -define(EMPTY_QUEUE(), queue:new()).
@@ -65,6 +72,7 @@ run(Graph, Root) ->
 %% BFS Functions
 %% ==========================================================
 
+%% Initialize data structures
 -spec bfs_init(graph:graph(), graph:vertex()) -> {queue(), states(), parents()}.
 bfs_init(Graph, Root) ->
   EQ = ?EMPTY_QUEUE(),
@@ -72,7 +80,7 @@ bfs_init(Graph, Root) ->
   EP = ?EMPTY_PARENTS(),
   NQ = ?ADD_TO_QUEUE(Root, 0, EQ),
   NM = ?SET_STATE(Root, 'Y', EM),
-  NP = ?ADD_TO_PARENTS(Root, 0, root, EP),
+  NP = ?ADD_TO_PARENTS(Root, 0, 'root', EP),
   Vs = graph:vertices(Graph) -- [Root],
   NxtM =
     lists:foldl(
@@ -80,12 +88,13 @@ bfs_init(Graph, Root) ->
       NM, Vs),
   {NQ, NxtM, NP}.
 
+%% BFS loop
 -spec bfs_step(graph:graph(), queue(), states(), parents()) -> parents().
 bfs_step(Graph, Q, M, P) ->
   case ?IS_EMPTY(Q) of
-    true ->
+    'true' ->
       P;
-    false ->
+    'false' ->
       {{U, UCost}, NQ} = ?EXTRACT_FROM_QUEUE(Q),
       NM = ?SET_STATE(U, 'E', M),
       Neighbours = graph:out_neighbours(Graph, U),
