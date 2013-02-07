@@ -3,7 +3,7 @@ erlang-algorithms
 
 About the project
 -----------------
-The goal of this project is to implement some useful algorithms and dat structures in Erlang so as to help anyone who may need them.
+The goal of this project is to implement some useful algorithms and data structures in Erlang so as to help anyone who may need them.
 
 *  Currently Implemented Data Structures:
 	*  Directed, Undirected, Weighted, Unweighted Graphs
