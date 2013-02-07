@@ -14,6 +14,7 @@ SRC_MODULES = \
 	dijkstra \
 	bfs \
 	dfs \
+	kruskal \
 	heap \
 	union_find \
 	demo

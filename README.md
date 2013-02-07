@@ -14,6 +14,7 @@ The goal of this project is to implement some useful algorithms and dat structur
 	*  BFS
 	*  DFS
 	*  Dijkstra
+	*  Kruskal
 
 Graph Specs
 -----------
