@@ -17,7 +17,8 @@ SRC_MODULES = \
 	kruskal \
 	heap \
 	union_find \
-	demo
+	demo \
+	doc
 
 TARGETS = \
 	src_target
@@ -35,6 +36,9 @@ src_target: $(SRC_MODULES:%=$(EBIN)/%.beam)
 
 $(EBIN)/%.beam: %.erl
 	$(ERLC) $(ERLC_FLAGS) -o $(EBIN) $<
+
+edoc:
+	@(./makedoc.rb)
 
 dialyze: $(TARGETS)
 	dialyzer -n -Wunmatched_returns $(EBIN)/*.beam

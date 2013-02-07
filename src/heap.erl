@@ -1,48 +1,63 @@
 %%
+%% %CopyrightBegin%
+%%
 %% Copyright © 2013 Aggelos Giantsios
 %%
-
 %% Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
 %% and associated documentation files (the “Software”), to deal in the Software without restriction, 
 %% including without limitation the rights to use, copy, modify, merge, publish, distribute, 
 %% sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
 %% furnished to do so, subject to the following conditions:
-
+%%
 %% The above copyright notice and this permission notice shall be included 
 %% in all copies or substantial portions of the Software.
-
+%%
 %% THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
 %% TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 %% IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 %% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 %% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 %%
-%% Min-Heap, Max-Heap, Priority Queue
+%% %CopyrightEnd%
 %%
 
+%% @copyright 2013 Aggelos Giantsios
+%% @author Aggelos Giantsios
+
+%% ============================================================================
+%% @doc Min-Heap, Max-Heap for Priority Queues
+%%
+%%
 %% This module implements min-heaps and max-heaps for use in priority queues.
-%% Each value in the heap is assosiated with a reference so that the user can change its priority in O(log n).
+%% Each value in the heap is assosiated with a reference so that 
+%% the user can change its priority in O(log n).
 %%
 %% The implementation is based on ETS tables for the O(1) lookup time.
 %% It supports all the basic heap operations:
-%% *  min/1, max/1 in O(1)
-%% *  take_min/1, take_max/1 in O(log n)
-%% *  insert/2 in O(log n)
-%% *  update/3 in O(log n)
-%% *  from_list/2 in Θ(n)
-
+%% <ul>
+%%   <li><code>min/1</code>, <code>max/1</code> in O(1)</li>
+%%   <li><code>take_min/1</code>, <code>take_max/1</code> in O(log n)</li>
+%%   <li><code>insert/2</code> in O(log n)</li>
+%%   <li><code>update/3</code> in O(log n)</li>
+%%   <li><code>from_list/2</code> in O(n)</li>
+%% </ul>
+%%
+%% <p>In order to achieve the above complexities the heap needs to store
+%% an extra tuple <code>{Key, Reference}</code> for every
+%% <code>Key</code> stored. In addition, the size of the heap is
+%% stored as a tuple <code>{size, Size}</code>.</p>
+%%
 
 -module(heap).
 
-%% External Exports
 -export([new/1, heap_size/1, is_empty/1, max/1, min/1, insert/2, delete/1, 
          take_min/1, take_max/1, update/3, from_list/2, to_list/1]).
 
-%% Exported Types
--export_type([mode/0, heap/0]).
+-export_type([heap/0]).
 
-%% Types Declarations
+%%
+%% @type heap(). Min / Max Heap.
+%%
 -record(heap, {
   mode :: mode(),
   htab :: ets:tab()
@@ -55,7 +70,7 @@
 %% External Exports
 %% =======================================================================
 
-%% Get a list of the terms in a heap()
+%% @doc Returns a list of the terms in a heap.
 -spec to_list(heap()) -> [term()].
 
 to_list(H) ->
@@ -69,9 +84,9 @@ to_list(H) ->
   LL = lists:filter(M, L),
   lists:map(fun({_, {X, _}}) -> X end, LL).
 
-%% -----------------------------------------------------------------------
-%% Creates an empty heap
-%% -----------------------------------------------------------------------
+%% @doc Creates an empty heap.
+%% <p>If <code>M</code> is <code>max</code> then it will be a max heap, 
+%% else if <code>M</code> is <code>min</code> it will be a min heap.</p>
 -spec new(mode()) -> heap().
 
 new(M) when M =:= 'max'; M=:= 'min' ->
@@ -81,35 +96,27 @@ new(M) when M =:= 'max'; M=:= 'min' ->
 new(_Mode) ->
   erlang:error('badarg').
   
-%% -----------------------------------------------------------------------
-%% Deletes a heap
-%% -----------------------------------------------------------------------
+%% @doc Deletes a heap.
 -spec delete(heap()) -> 'true'.
 
 delete(H) ->
   ets:delete(H#heap.htab).
 
-%% -----------------------------------------------------------------------
-%% Returns the number of elements the Heap contains
-%% -----------------------------------------------------------------------
+%% @doc Returns the number of elements contained in a heap.
 -spec heap_size(heap()) -> non_neg_integer().
 
 heap_size(H) ->
   [{'size', Len}] = ets:lookup(H#heap.htab, 'size'),
   Len.
   
-%% -----------------------------------------------------------------------
-%% Checks whether Heap is an empty heap or not
-%% -----------------------------------------------------------------------
+%% @doc Checks whether a heap is empty or not.
 -spec is_empty(heap()) -> boolean().
 
 is_empty(H) ->
   heap_size(H) =:= 0.
   
-%% -----------------------------------------------------------------------
-%% Returns the element of the heap with the maximum priority.
-%% If Heap is a minimum priority heap, it returns {error, min_heap}
-%% -----------------------------------------------------------------------
+%% @doc Returns the element of a max heap with the maximum priority.
+%% <p>If it is a min heap, it returns <code>{error, min_heap}</code>.</p>
 -spec max(heap()) -> term() | {'error', 'min_heap' | 'empty_heap'}.
 
 max(H) when H#heap.mode =:= 'max' ->
@@ -120,10 +127,8 @@ max(H) when H#heap.mode =:= 'max' ->
 max(_H) ->
   {'error', 'min_heap'}.
   
-%% -----------------------------------------------------------------------
-%% Returns the element of the heap with the minimum priority.
-%% If Heap is a maximum priority heap, it returns {error, max_heap}
-%% -----------------------------------------------------------------------
+%% @doc Returns the element of a min heap with the minimum priority.
+%% <p>If it is a max heap, it returns <code>{error, max_heap}</code>.</p>
 -spec min(heap()) -> term() | {'error', 'max_heap' | 'empty_heap'}.
        
 min(H) when H#heap.mode =:= 'min' ->
@@ -134,10 +139,9 @@ min(H) when H#heap.mode =:= 'min' ->
 min(_H) ->
   {'error', 'max_heap'}.
   
-%% -----------------------------------------------------------------------
-%% Add a new element to the Heap and returns a tuple with the element
-%% and a reference so that one can change its priority
-%% -----------------------------------------------------------------------
+%% @doc Add a new element to a heap.
+%% <p>It returns a tuple with the element added and a reference
+%% so that one can change its priority.</p>
 -spec insert(heap(), term()) -> refterm().
   
 insert(H, X) ->
@@ -152,9 +156,7 @@ insert(H, X) ->
   insert_loop(H, I, P),
   {X, Ref}.
     
-%% -----------------------------------------------------------------------
-%% Removes and returns the max
-%% -----------------------------------------------------------------------
+%% @doc Removes and returns the maximum priority element of a max heap.
 -spec take_max(heap()) -> term() | {'error', 'min_heap' | 'empty_heap'}.
          
 take_max(H) when H#heap.mode =:= 'max' ->
@@ -162,20 +164,16 @@ take_max(H) when H#heap.mode =:= 'max' ->
 take_max(_H) ->
   {'error', 'min_heap'}.
 
-%% -----------------------------------------------------------------------
-%% Removes and returns the min
-%% -----------------------------------------------------------------------
+%% @doc Removes and returns the minimum priority element of a min heap.
 -spec take_min(heap()) -> term() | {'error', 'max_heap' | 'empty_heap'}.
-         
+  
 take_min(H) when H#heap.mode =:= 'min' ->
   pop(H);
 take_min(_H) ->
   {'error', 'max_heap'}.
 
-%% -----------------------------------------------------------------------
 %% Deletes and returns the element at the top of the heap
 %% and re-arranges the rest of the heap
-%% -----------------------------------------------------------------------
 -spec pop(heap()) -> term().
   
 pop(H) ->
@@ -199,10 +197,9 @@ pop(H) ->
       Head
   end.
 
-%% -----------------------------------------------------------------------
-%% Changes the priority of the element referenced with Ref to Value
-%% and then re-arranges the heap
-%% -----------------------------------------------------------------------
+%% @doc Change the priority of an element.
+%% <p>It changes the priority of the element referenced with
+%% <code>Ref</code> to <code>Value</code> and then re-arranges the heap.</p>
 -spec update(heap(), reference(), term()) -> 'true'.
   
 update(H, Ref, X) ->
@@ -220,9 +217,10 @@ update(H, Ref, X) ->
       'true'
   end.
 
-%% -----------------------------------------------------------------------
-%% Create a heap from a list of terms
-%% -----------------------------------------------------------------------
+%% @doc Create a heap from a list of terms.
+%% <p>It returns the heap and a list of tuples <code>{Key, Ref}</code>
+%% where <code>Key</code> is the term that was added and <code>Ref</code>
+%% is its reference (used to change its priority).</p>
 -spec from_list(mode(), [term()]) -> {heap(), [refterm()]}.
 
 from_list(M, L) when is_list(L), is_atom(M) ->
