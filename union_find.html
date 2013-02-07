@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Module union_find</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module union_find</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Union / Find.
+<p>Copyright © 2013 Aggelos Giantsios</p>
+
+<p><b>Authors:</b> Aggelos Giantsios.</p>
+
+<h2><a name="description">Description</a></h2><p>Union / Find</p>
+ 
+  <p>This module implements the Union / Find data structure.</p>
+ 
+  <p>
+    The implementation is based on ETS tables for the O(1) lookup.
+    It is optimized for the basic union / find operations:
+    <ul>
+      <li>
+        <code>union/3</code> in <em>O(1)</em>
+      </li>
+      <li>
+        <code>find/2</code> in ammortized <em>O(m a(n, m))</em> where
+        <em>m &gt;= n</em> finds and <em>n</em> unions and <em>a(n, m)</em> is the
+        reverse Ackermann function. Practically, the overall
+        complexity is <em>O(m)</em>.
+      </li>
+      <li>
+        <code>singletons_from_list/1</code>, <code>singletons_from_list/2</code>
+        in <em>O(n)</em>.
+      </li>
+    </ul>
+  </p>
+ 
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-uf_find">uf_find()</a></h3>
+<p><tt>uf_find() = term() | <a href="#type-uf_undef">uf_undef()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-uf_forest">uf_forest()</a></h3>
+<p><b>abstract datatype</b>: <tt>uf_forest()</tt></p>
+<p>A forest of union-find sets.
+ </p>
+
+<h3 class="typedecl"><a name="type-uf_size">uf_size()</a></h3>
+<p><tt>uf_size() = pos_integer() | <a href="#type-uf_undef">uf_undef()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-uf_undef">uf_undef()</a></h3>
+<p><tt>uf_undef() = {error, undef_element}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-uf_union">uf_union()</a></h3>
+<p><tt>uf_union() = true | <a href="#type-uf_undef">uf_undef()</a> | {error, not_parent_elements}</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Delete a forest.</td></tr>
+<tr><td valign="top"><a href="#find-2">find/2</a></td><td>Find the parent element of the set which a term belongs to.</td></tr>
+<tr><td valign="top"><a href="#number_of_sets-1">number_of_sets/1</a></td><td>Return the number of sets that exist in a forest.</td></tr>
+<tr><td valign="top"><a href="#pprint-1">pprint/1</a></td><td>Pretty print the sets of a forest.</td></tr>
+<tr><td valign="top"><a href="#set_elements-2">set_elements/2</a></td><td>Return a list of all the elements of the set
+  which an element belongs to.</td></tr>
+<tr><td valign="top"><a href="#set_size-2">set_size/2</a></td><td>Return the size of the set which an element belongs to.</td></tr>
+<tr><td valign="top"><a href="#singletons_from_list-1">singletons_from_list/1</a></td><td>Create a forest of singleton sets from a list of terms.</td></tr>
+<tr><td valign="top"><a href="#singletons_from_list-2">singletons_from_list/2</a></td><td>Create a forest of singleton sets from a list of terms.</td></tr>
+<tr><td valign="top"><a href="#union-3">union/3</a></td><td>Union of two sets.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="delete-1">delete/1</a></h3>
+<div class="spec">
+<p><tt>delete(Forest::<a href="#type-uf_forest">uf_forest()</a>) -&gt; true</tt><br></p>
+</div><p>Delete a forest</p>
+
+<h3 class="function"><a name="find-2">find/2</a></h3>
+<div class="spec">
+<p><tt>find(Forest::<a href="#type-uf_forest">uf_forest()</a>, X::term()) -&gt; <a href="#type-uf_find">uf_find()</a></tt><br></p>
+</div><p>Find the parent element of the set which a term belongs to.</p>
+
+<h3 class="function"><a name="number_of_sets-1">number_of_sets/1</a></h3>
+<div class="spec">
+<p><tt>number_of_sets(Forest::<a href="#type-uf_forest">uf_forest()</a>) -&gt; non_neg_integer()</tt><br></p>
+</div><p>Return the number of sets that exist in a forest</p>
+
+<h3 class="function"><a name="pprint-1">pprint/1</a></h3>
+<div class="spec">
+<p><tt>pprint(Forest::<a href="#type-uf_forest">uf_forest()</a>) -&gt; ok</tt><br></p>
+</div><p>Pretty print the sets of a forest</p>
+
+<h3 class="function"><a name="set_elements-2">set_elements/2</a></h3>
+<div class="spec">
+<p><tt>set_elements(Forest::<a href="#type-uf_forest">uf_forest()</a>, X::term()) -&gt; [term(), ...]</tt><br></p>
+</div><p>Return a list of all the elements of the set
+  which an element belongs to.</p>
+
+<h3 class="function"><a name="set_size-2">set_size/2</a></h3>
+<div class="spec">
+<p><tt>set_size(Forest::<a href="#type-uf_forest">uf_forest()</a>, X::term()) -&gt; <a href="#type-uf_size">uf_size()</a></tt><br></p>
+</div><p>Return the size of the set which an element belongs to</p>
+
+<h3 class="function"><a name="singletons_from_list-1">singletons_from_list/1</a></h3>
+<div class="spec">
+<p><tt>singletons_from_list(L::[term(), ...]) -&gt; <a href="#type-uf_forest">uf_forest()</a></tt><br></p>
+</div><p>Create a forest of singleton sets from a list of terms.</p>
+
+<h3 class="function"><a name="singletons_from_list-2">singletons_from_list/2</a></h3>
+<div class="spec">
+<p><tt>singletons_from_list(Fun::function(), L::[term(), ...]) -&gt; <a href="#type-uf_forest">uf_forest()</a></tt><br></p>
+</div><p>Create a forest of singleton sets from a list of terms.
+  <p>Same as <code>singletons_from_list/1</code> but it applies
+  <code>Fun</code> to each term before adding it to the forest.</p></p>
+
+<h3 class="function"><a name="union-3">union/3</a></h3>
+<div class="spec">
+<p><tt>union(Forest::<a href="#type-uf_forest">uf_forest()</a>, X::term(), Y::term()) -&gt; <a href="#type-uf_union">uf_union()</a></tt><br></p>
+</div><p>Union of two sets.
+  <p>The parent elements of the two sets are needed.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc, Feb 8 2013, 01:54:45.</i></p>
+</body>
+</html>

@@ -7,7 +7,7 @@
 <ul>
   <li><a href="graph.html">Directed, Undirected, Weighted, Unweighted Graphs</a></li>
   <li><a href="heap.html">Min / Max Heaps</a></li>
-  <li>Union / Find</li>
+  <li><a href="union_find.html">Union / Find</a></li>
 </ul>
 
 == Currently Implemented Algorithms ==
