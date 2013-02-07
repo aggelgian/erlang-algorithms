@@ -9,7 +9,8 @@ The goal of this project is to implement some useful algorithms and dat structur
 	*  Directed, Undirected, Weighted, Unweighted Graphs
 	*  Min / Max Heaps
 
-*  Currently Implemented Algorithmss:
+
+*  Currently Implemented Algorithms:
 	*  BFS
 	*  DFS
 	*  Dijkstra
