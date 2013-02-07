@@ -22,7 +22,12 @@
 %%
 
 %% This module implements the Union / Find data structure.
-%% The implementation is based ETS tables for the O(1) lookup.
+%% The implementation is based on ETS tables for the O(1) lookup.
+%% It is optimized for the basic union / find operations:
+%% *  Union/3 in O(1)
+%% *  Find/2 in ammortized O(m α(n, m)) where m >= n finds
+%%    and n unions and α(n, m) is the reverse Ackermann function (practically O(m))
+%% *  singletons_from_list/1 in O(n)
 
 -module(union_find).
 
