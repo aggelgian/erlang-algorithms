@@ -27,20 +27,20 @@
 %% ============================================================================
 %% @doc Min-Heap, Max-Heap for Priority Queues
 %%
-%%
-%% This module implements min-heaps and max-heaps for use in priority queues.
+%% <p>This module implements min-heaps and max-heaps for use in priority queues.
 %% Each value in the heap is assosiated with a reference so that 
-%% the user can change its priority in O(log n).
+%% the user can change its priority in O(log n).</p>
 %%
-%% The implementation is based on ETS tables for the O(1) lookup time.
-%% It supports all the basic heap operations:
-%% <ul>
-%%   <li><code>min/1</code>, <code>max/1</code> in O(1)</li>
-%%   <li><code>take_min/1</code>, <code>take_max/1</code> in O(log n)</li>
-%%   <li><code>insert/2</code> in O(log n)</li>
-%%   <li><code>update/3</code> in O(log n)</li>
-%%   <li><code>from_list/2</code> in O(n)</li>
-%% </ul>
+%% <p>The implementation is based on ETS tables for the O(1) lookup time.
+%%   It supports all the basic heap operations:
+%%   <ul>
+%%     <li><code>min/1</code>, <code>max/1</code> in <em>O(1)</em></li>
+%%     <li><code>take_min/1</code>, <code>take_max/1</code> in <em>O(log n)</em></li>
+%%     <li><code>insert/2</code> in <em>O(log n)</em></li>
+%%     <li><code>update/3</code> in <em>O(log n)</em></li>
+%%     <li><code>from_list/2</code> in <em>O(n)</em></li>
+%%   </ul>
+%% </p>
 %%
 %% <p>In order to achieve the above complexities the heap needs to store
 %% an extra tuple <code>{Key, Reference}</code> for every

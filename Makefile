@@ -1,8 +1,9 @@
-.PHONY: clean all
+.PHONY: clean all distclean
 
 TOP = $(PWD)
 SRC = src
 EBIN = ebin
+DOC = doc
 ERLC = erlc
 
 WARNS = +warn_exported_vars +warn_unused_import +warn_missing_spec
@@ -37,12 +38,15 @@ src_target: $(SRC_MODULES:%=$(EBIN)/%.beam)
 $(EBIN)/%.beam: %.erl
 	$(ERLC) $(ERLC_FLAGS) -o $(EBIN) $<
 
-edoc:
+edoc: $(TARGETS)
 	@(./makedoc.rb)
 
 dialyze: $(TARGETS)
 	dialyzer -n -Wunmatched_returns $(EBIN)/*.beam
 
 clean:
-	rm $(EBIN)/*.beam
+	$(RM) $(EBIN)/*.beam
+
+distclean: clean
+	$(RM) $(DOC)/*.html $(DOC)/*.css $(DOC)/*.png $(DOC)/edoc-info
 

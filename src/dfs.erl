@@ -1,32 +1,37 @@
 %%
+%% %CopyrightBegin%
+%%
 %% Copyright © 2013 Aggelos Giantsios
 %%
-
 %% Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
 %% and associated documentation files (the “Software”), to deal in the Software without restriction, 
 %% including without limitation the rights to use, copy, modify, merge, publish, distribute, 
 %% sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
 %% furnished to do so, subject to the following conditions:
-
+%%
 %% The above copyright notice and this permission notice shall be included 
 %% in all copies or substantial portions of the Software.
-
+%%
 %% THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED 
 %% TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 %% IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 %% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 %% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 %%
-%% DFS Algorithm
+%% %CopyrightEnd%
+%%
+
+%% @copyright 2013 Aggelos Giantsios
+%% @author Aggelos Giantsios
+
+%% ============================================================================
+%% @doc DFS Algorithm
 %%
 
 -module(dfs).
 
-%% External Exports
 -export([run/2]).
 
-%% Types Declarations
 -type stack()   :: [{graph:vertex(), term()}].
 -type states()  :: dict().
 -type parents() :: dict().
@@ -55,12 +60,8 @@
 %% Exported Functions
 %% ==========================================================
 
-%% ----------------------------------------------------------
-%% run(Graph, Root) -> Result
-%%   Graph   ::  graph()
-%%   Root    ::  vertex()
-%%   Result  ::  [{Node, {Cost, Path}}]
-%% ----------------------------------------------------------
+%% @doc Runs the DFS algorithm on a graph <code>Graph</code>
+%% with <code>Root</code> as point of origin
 -spec run(graph:graph(), graph:vertex()) -> [graph_lib:path_info()].
 run(Graph, Root) ->
   {S, M, P} = dfs_init(Graph, Root),
