@@ -82,7 +82,7 @@ graph() ->
   X = 0,
   {'ok', RootDir} = file:get_cwd(),
   File = RootDir ++ "/test_data/graph1.txt",
-  G = graph:new_graph(File),
+  G = graph:from_file(File),
   Dijkstra = dijkstra:run(G, X),
   BFS = bfs:run(G,X),
   DFS = dfs:run(G,X),

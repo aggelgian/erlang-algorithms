@@ -62,9 +62,10 @@
 
 -module(graph).
 
--export([new_graph/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
+-export([from_file/1, del_graph/1, vertices/1, edges/1, edge_weight/2,
          edges_with_weights/1, out_neighbours/2, num_of_vertices/1,
-         num_of_edges/1, pprint/1]).
+         num_of_edges/1, pprint/1, empty/1, add_vertex/2, add_edge/3,
+         add_edge/4, graph_type/1, del_edge/2]).
 
 -export_type([graph/0, vertex/0, edge/0]).
 
@@ -77,16 +78,22 @@
 -type vertex() :: non_neg_integer().
 -type edge()   :: {vertex(), vertex()}.
 -type graphtype()  :: 'directed' | 'undirected'.
--type weighttype() :: 'unweighted' | 'd' | 'f'.
+%-type weighttype() :: 'unweighted' | 'd' | 'f'.
 
 %% ==========================================================
 %% Exported Functions
 %% ==========================================================
 
-%% @doc Create a new graph from a file
--spec new_graph(file:name()) -> graph().
+%% @doc Create a new empty graph.
+-spec empty(graphtype()) -> graph().
 
-new_graph(File) ->
+empty(Type) when Type =:= 'directed'; Type =:= 'undirected' ->
+  #graph{type=Type, graph=digraph:new()}.
+
+%% @doc Create a new graph from a file.
+-spec from_file(file:name()) -> graph().
+
+from_file(File) ->
   {'ok', IO} = file:open(File, ['read']),
   %% N = Number of Vertices :: non_neg_integer()
   %% M = Number of Edges :: non_neg_integer()
@@ -105,6 +112,18 @@ new_graph(File) ->
 del_graph(G) ->
   digraph:delete(G#graph.graph).
   
+%% @doc Return the type of the graph.
+-spec graph_type(graph()) -> graphtype().
+  
+graph_type(G) ->
+  G#graph.type.
+
+%% @doc Add a vertex to a graph
+-spec add_vertex(graph(), vertex()) -> vertex().
+
+add_vertex(G, V) ->
+  digraph:add_vertex(G#graph.graph, V).
+  
 %% @doc Return a list of the vertices of a graph
 -spec vertices(graph()) -> [vertex()].
   
@@ -115,8 +134,27 @@ vertices(G) ->
 -spec num_of_vertices(graph()) -> non_neg_integer().
   
 num_of_vertices(G) ->
-  Vs = vertices(G),
-  length(Vs).
+  digraph:no_vertices(G#graph.graph).
+  
+%% @doc Add an edge to an unweighted graph.
+-spec add_edge(graph(), vertex(), vertex()) -> edge().
+
+add_edge(G, From, To) ->
+  add_edge(G, From, To, 1).
+  
+%% @doc Add an edge to a weighted graph
+-spec add_edge(graph(), vertex(), vertex(), number()) -> edge() | {'error', 'not_numeric_weight'}.
+
+add_edge(G, From, To, W) when is_number(W) -> 
+  digraph:add_edge(G#graph.graph, {From, To}, From, To, W);
+add_edge(_G, _From, _To, _W) ->
+  {'error', 'not_numeric_weight'}.
+  
+%% @doc Delete an edge from a graph
+-spec del_edge(graph(), edge()) -> 'true'.
+
+del_edge(G, E) ->
+  digraph:del_edge(G#graph.graph, E).
   
 %% @doc Return a list of the edges of a graph
 -spec edges(graph()) -> [edge()].
@@ -134,8 +172,11 @@ edges(G) ->
 -spec num_of_edges(graph()) -> non_neg_integer().
   
 num_of_edges(G) ->
-  Es = edges(G),
-  length(Es).
+  M = digraph:no_edges(G#graph.graph),
+  case G#graph.type of
+    'directed'   -> M;
+    'undirected' -> M div 2
+  end.
   
 %% @doc Return the weight of an edge
 -spec edge_weight(graph(), edge()) -> term().
@@ -183,8 +224,6 @@ pprint(G) ->
 %% ==========================================================
 
 %% Initialize the vertices of the graph
--spec init_vertices(digraph(), non_neg_integer(), non_neg_integer()) -> 'ok'.
-  
 init_vertices(_G, _N, _N) ->
   ok;
 init_vertices(G, N, V) ->
@@ -192,8 +231,6 @@ init_vertices(G, N, V) ->
   init_vertices(G, N, V+1).
   
 %% Initialize the edges of the graph
--spec init_edges(digraph(), non_neg_integer(), file:io_device(), graphtype(), weighttype()) -> 'ok'.
-  
 init_edges(_G, 0, _IO, _T, _WT) ->
   'ok';
 init_edges(G, M, IO, T, 'unweighted') ->
@@ -218,7 +255,7 @@ init_edges(G, M, IO, T, WT) ->
   end,
   init_edges(G, M-1, IO, T, WT).
   
--spec remove_duplicate_edges([edge()], [edge()]) -> [edge()].
+%% Remove the duplicate edges of a undirected graph
 remove_duplicate_edges([], Acc) ->
   Acc;
 remove_duplicate_edges([{From, To}=E|Es], Acc) ->
