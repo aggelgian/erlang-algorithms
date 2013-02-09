@@ -45,7 +45,8 @@
 %% instead of<code>{Cost, Path}</code> there will be the
 %% atom <code>unreachable</code>.</p>
 %%
-%% @type flow(). It is used for the result of Edmonds-Karp algorithm.
+%% @type flow(). It is used for the result of Edmonds-Karp and 
+%% Ford-Fulkerson algorithms.
 %% <p>It's a tuple <code>{Val, Flow}</code> that contains the information
 %% about the value of the flow <code>Val :: number()</code> and how it is
 %% achieved by the network's <code>Flow :: [{edge(), number()}]</code>.</p>
@@ -71,7 +72,7 @@ reconstruct_all_paths(Vertices, Result) ->
   lists:map(fun(V) -> reconstruct_path(Result, V) end, SortedVs).
   
 %% @doc Reconstruct the flow information for a flow algortihm's result.
-%% (Algorithms included: Edmonds-Karp).
+%% (Algorithms included: Edmonds-Karp, Ford-Fulkerson).
 -spec reconstruct_flow([proplists:property()]) -> flow().
 
 reconstruct_flow(L) ->

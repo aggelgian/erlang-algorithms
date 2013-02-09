@@ -98,8 +98,10 @@ flow() ->
   {'ok', RootDir} = file:get_cwd(),
   File = RootDir ++ "/test_data/graph3.txt",
   G = graph:from_file(File),
-  MFlow = edmonds_karp:run(G, 0, 5),
-  io:format("Edmonds-Karp: ~p~n", [MFlow]),
+  Edmonds = edmonds_karp:run(G, 0, 5, 'bfs'),
+  Ford = edmonds_karp:run(G, 0, 5, 'dfs'),
+  io:format("Edmonds-Karp: ~p~n", [Edmonds]),
+  io:format("Ford-Fulkerson: ~p~n", [Ford]),
   erlang:display('demo_ok').
   
 -spec union_find() -> 'true'.

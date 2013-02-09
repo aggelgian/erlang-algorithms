@@ -25,46 +25,54 @@
 %% @author Aggelos Giantsios
 
 %% ============================================================================
-%% @doc Edmonds-Karp Algorithm
+%% @doc Edmonds-Karp / Ford-Fulkerson Algorithms
 %%
 %% <p>Calculates the Maximum Flow in a Network (Directed Graph)</p>
 %%
 
 -module(edmonds_karp).
 
--export([run/3]).
+-export([run/4]).
+
+-type mode() :: 'bfs' | 'dfs'.
 
 %% ==========================================================
 %% Exported Functions
 %% ==========================================================
 
-%% @doc Runs the Edmonds-Karp algorithm on a graph <code>G</code>
-%% with <code>S</code> as source as <code>T</code> as sink.
--spec run(graph:graph(), graph:vertex(), graph:vertex()) -> graph_lib:flow() | {'error', 'not_network'}.
+%% @doc Runs the Edmonds-Karp or Ford-Fulkerson algorithm 
+%% on a graph <code>G</code> with <code>S</code> as source 
+%% as <code>T</code> as sink.
+%%
+%% <p>When <code>Mode</code> is <code>dfs</code> the algorithm is 
+%% called Ford-Fulkerson and when <code>Mode</code> is 
+%% <code>bfs</code> the algorithm is called Edmonds-Karp.</p>
+%%
+-spec run(graph:graph(), graph:vertex(), graph:vertex(), mode()) -> graph_lib:flow() | {'error', 'not_network'}.
 
-run(G, S, T) ->
+run(G, S, T, Mode) when Mode =:= 'bfs'; Mode =:= 'dfs' ->
   case graph:graph_type(G) of
     'directed' ->
       {Flow, RN} = init_residual_network(G),
-      'ok' = edmonds_karp_step(G, RN, Flow, S, T),
+      'ok' = edmonds_karp_step(G, RN, Flow, S, T, Mode),
       graph_lib:reconstruct_flow(ets:tab2list(Flow));
     'undirected' ->
       {'error', 'not_network'}
   end.
 
 %% ==========================================================
-%% Edmonds-Karp Functions
+%% Edmonds-Karp / Ford-FulkersonFunctions
 %% ==========================================================
 
 %% Edmonds-Karp loop
--spec edmonds_karp_step(graph:graph(), graph:graph(), ets:tid(), graph:vertex(), graph:vertex()) -> 'ok'.
-edmonds_karp_step(G, RN, Flow, S, T) ->
-  case augmenting_path(RN, S, T) of
+-spec edmonds_karp_step(graph:graph(), graph:graph(), ets:tid(), graph:vertex(), graph:vertex(), mode()) -> 'ok'.
+edmonds_karp_step(G, RN, Flow, S, T, M) ->
+  case augmenting_path(RN, S, T, M) of
     'no_path' ->
       'ok';
     EPath ->
       RN_n = update_residual_network(G, RN, Flow, EPath),
-      edmonds_karp_step(G, RN_n, Flow, S, T)
+      edmonds_karp_step(G, RN_n, Flow, S, T, M)
   end.
 
 %% Initialize Residual Network
@@ -81,10 +89,14 @@ init_residual_network(G) ->
   {F, RN}.
       
 %% Find an augmenting path
--spec augmenting_path(graph:graph(), graph:vertex(), graph:vertex()) -> graph_lib:epath_weighted() | 'no_path'.
-augmenting_path(RN, S, T) ->
-  BFS = bfs:run(RN, S),
-  case proplists:get_value(T, BFS) of
+-spec augmenting_path(graph:graph(), graph:vertex(), graph:vertex(), mode()) -> graph_lib:epath_weighted() | 'no_path'.
+augmenting_path(RN, S, T, M) ->
+  Traversal =
+    case M of
+      'dfs' -> dfs:run(RN, S);
+      'bfs' -> bfs:run(RN, S)
+    end,
+  case proplists:get_value(T, Traversal) of
     'unreachable'  -> 'no_path';
     {_Cost, VPath} -> path_edges(RN, VPath)
   end.
