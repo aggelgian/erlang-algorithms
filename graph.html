@@ -61,16 +61,26 @@
   <p>It is wrapper for a digraph with the extra information on its type.</p>
  </p>
 
+<h3 class="typedecl"><a name="type-graphtype">graphtype()</a></h3>
+<p><tt>graphtype() = directed | undirected</tt></p>
+<p>-type weighttype() :: 'unweighted' | 'd' | 'f'.</p>
+
 <h3 class="typedecl"><a name="type-vertex">vertex()</a></h3>
 <p><tt>vertex() = non_neg_integer()</tt></p>
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#del_graph-1">del_graph/1</a></td><td>Delete a graph.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_edge-3">add_edge/3</a></td><td>Add an edge to an unweighted graph.</td></tr>
+<tr><td valign="top"><a href="#add_edge-4">add_edge/4</a></td><td>Add an edge to a weighted graph.</td></tr>
+<tr><td valign="top"><a href="#add_vertex-2">add_vertex/2</a></td><td>Add a vertex to a graph.</td></tr>
+<tr><td valign="top"><a href="#del_edge-2">del_edge/2</a></td><td>Delete an edge from a graph.</td></tr>
+<tr><td valign="top"><a href="#del_graph-1">del_graph/1</a></td><td>Delete a graph.</td></tr>
 <tr><td valign="top"><a href="#edge_weight-2">edge_weight/2</a></td><td>Return the weight of an edge.</td></tr>
 <tr><td valign="top"><a href="#edges-1">edges/1</a></td><td>Return a list of the edges of a graph.</td></tr>
 <tr><td valign="top"><a href="#edges_with_weights-1">edges_with_weights/1</a></td><td>Return a list of the edges of a graph along with their weights.</td></tr>
-<tr><td valign="top"><a href="#new_graph-1">new_graph/1</a></td><td>Create a new graph from a file.</td></tr>
+<tr><td valign="top"><a href="#empty-1">empty/1</a></td><td>Create a new empty graph.</td></tr>
+<tr><td valign="top"><a href="#from_file-1">from_file/1</a></td><td>Create a new graph from a file.</td></tr>
+<tr><td valign="top"><a href="#graph_type-1">graph_type/1</a></td><td>Return the type of the graph.</td></tr>
 <tr><td valign="top"><a href="#num_of_edges-1">num_of_edges/1</a></td><td>Return the number of edges in a graph.</td></tr>
 <tr><td valign="top"><a href="#num_of_vertices-1">num_of_vertices/1</a></td><td>Return the number of vertices in a graph.</td></tr>
 <tr><td valign="top"><a href="#out_neighbours-2">out_neighbours/2</a></td><td>Return a list of the out neighbours of a vertex.</td></tr>
@@ -79,6 +89,26 @@
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add_edge-3">add_edge/3</a></h3>
+<div class="spec">
+<p><tt>add_edge(G::<a href="#type-graph">graph()</a>, From::<a href="#type-vertex">vertex()</a>, To::<a href="#type-vertex">vertex()</a>) -&gt; <a href="#type-edge">edge()</a></tt><br></p>
+</div><p>Add an edge to an unweighted graph.</p>
+
+<h3 class="function"><a name="add_edge-4">add_edge/4</a></h3>
+<div class="spec">
+<p><tt>add_edge(G::<a href="#type-graph">graph()</a>, From::<a href="#type-vertex">vertex()</a>, To::<a href="#type-vertex">vertex()</a>, W::number()) -&gt; <a href="#type-edge">edge()</a> | {error, not_numeric_weight}</tt><br></p>
+</div><p>Add an edge to a weighted graph</p>
+
+<h3 class="function"><a name="add_vertex-2">add_vertex/2</a></h3>
+<div class="spec">
+<p><tt>add_vertex(G::<a href="#type-graph">graph()</a>, V::<a href="#type-vertex">vertex()</a>) -&gt; <a href="#type-vertex">vertex()</a></tt><br></p>
+</div><p>Add a vertex to a graph</p>
+
+<h3 class="function"><a name="del_edge-2">del_edge/2</a></h3>
+<div class="spec">
+<p><tt>del_edge(G::<a href="#type-graph">graph()</a>, E::<a href="#type-edge">edge()</a>) -&gt; true</tt><br></p>
+</div><p>Delete an edge from a graph</p>
 
 <h3 class="function"><a name="del_graph-1">del_graph/1</a></h3>
 <div class="spec">
@@ -100,10 +130,20 @@
 <p><tt>edges_with_weights(G::<a href="#type-graph">graph()</a>) -&gt; [{<a href="#type-edge">edge()</a>, term()}]</tt><br></p>
 </div><p>Return a list of the edges of a graph along with their weights</p>
 
-<h3 class="function"><a name="new_graph-1">new_graph/1</a></h3>
+<h3 class="function"><a name="empty-1">empty/1</a></h3>
 <div class="spec">
-<p><tt>new_graph(File::<a href="file.html#type-name">file:name()</a>) -&gt; <a href="#type-graph">graph()</a></tt><br></p>
-</div><p>Create a new graph from a file</p>
+<p><tt>empty(Type::<a href="#type-graphtype">graphtype()</a>) -&gt; <a href="#type-graph">graph()</a></tt><br></p>
+</div><p>Create a new empty graph.</p>
+
+<h3 class="function"><a name="from_file-1">from_file/1</a></h3>
+<div class="spec">
+<p><tt>from_file(File::<a href="file.html#type-name">file:name()</a>) -&gt; <a href="#type-graph">graph()</a></tt><br></p>
+</div><p>Create a new graph from a file.</p>
+
+<h3 class="function"><a name="graph_type-1">graph_type/1</a></h3>
+<div class="spec">
+<p><tt>graph_type(G::<a href="#type-graph">graph()</a>) -&gt; <a href="#type-graphtype">graphtype()</a></tt><br></p>
+</div><p>Return the type of the graph.</p>
 
 <h3 class="function"><a name="num_of_edges-1">num_of_edges/1</a></h3>
 <div class="spec">
@@ -132,6 +172,6 @@
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Feb 8 2013, 02:17:06.</i></p>
+<p><i>Generated by EDoc, Feb 9 2013, 11:56:28.</i></p>
 </body>
 </html>
