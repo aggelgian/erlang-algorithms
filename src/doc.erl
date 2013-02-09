@@ -4,7 +4,7 @@
 
 -spec make_doc() -> 'ok'.
 make_doc() ->
-  Mods = ["graph.erl", "heap.erl", "union_find.erl", "dfs.erl", "bfs.erl", "graph_lib.erl",
-  "dijkstra.erl", "kruskal.erl", "edmonds_karp.erl"],
-  Fs = lists:map(fun(M) -> filename:absname("src/" ++ M) end, Mods),
+  Src = filename:absname("src"),
+  Mods = [graph, heap, union_find, dfs, bfs, graph_lib, dijkstra, kruskal, edmonds_karp],
+  Fs = [Src ++ "/" ++ atom_to_list(M) ++ ".erl" || M <- Mods],
   edoc:files(Fs, [{dir, "doc"}]).
