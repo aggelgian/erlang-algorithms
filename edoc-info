@@ -1,3 +1,4 @@
 %% encoding: UTF-8
 {packages,[]}.
-{modules,[bfs,dfs,dijkstra,graph,graph_lib,heap,kruskal,union_find]}.
+{modules,[bfs,dfs,dijkstra,edmonds_karp,graph,graph_lib,heap,kruskal,
+          union_find]}.

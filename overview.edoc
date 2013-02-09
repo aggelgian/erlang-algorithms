@@ -16,5 +16,6 @@
   <li><a href="dfs.html">DFS</a></li>
   <li><a href="dijkstra.html">Dijkstra</a></li>
   <li><a href="kruskal.html">Kruskal</a></li>
+  <li><a href="edmonds_karp.html">Edmonds-Karp</a></li>
 </ul>
 
