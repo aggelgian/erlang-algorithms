@@ -30,21 +30,33 @@
 
 -module(graph_lib).
 
--export([reconstruct_all_paths/2]).
+-export([reconstruct_all_paths/2, reconstruct_flow/1]).
 
--export_type([path/0, path_info/0, mst/0, mst_info/0]).
+-export_type([vpath/0, path_info/0, mst/0, mst_info/0, 
+              epath/0, epath_weighted/0, flow/0]).
 
 %%
 %% @type path_info(). It is used for the result of BFS, DFS 
 %% and Dijkstra algorithms.
 %% <p>It's a tuple <code>{Vertex, {Cost, Path}}</code> that 
-%% contains the information about the <code>Cost :: term()</code>
-%% and <code>Path :: path()</code> of a <code>Vertex</code>.</p>
+%% contains the information about the <code>Cost :: number()</code>
+%% and <code>Path :: vpath()</code> of a <code>Vertex</code>.
+%% If a vertex cannot be reached from the root vertex then
+%% instead of<code>{Cost, Path}</code> there will be the
+%% atom <code>unreachable</code>.</p>
+%%
+%% @type flow(). It is used for the result of Edmonds-Karp algorithm.
+%% <p>It's a tuple <code>{Val, Flow}</code> that contains the information
+%% about the value of the flow <code>Val :: number()</code> and how it is
+%% achieved by the network's <code>Flow :: [{edge(), number()}]</code>.</p>
 %%
 -type mst()  :: [graph:edge()].
--type mst_info()  :: {term(), mst()}.
--type path() :: [graph:vertex()].
--type path_info() :: {graph:vertex(), {term(), path()} | 'unreachable'}.
+-type mst_info()  :: {graph:weight(), mst()}.
+-type vpath() :: [graph:vertex()].
+-type epath() :: [graph:edge()].
+-type epath_weighted() :: [{graph:edge(), graph:weight()}].
+-type path_info() :: {graph:vertex(), {graph:weight(), vpath()} | 'unreachable'}.
+-type flow() :: {graph:weight(), [{graph:edge(), graph:weight()}]}.
 
 %% ==========================================================
 %% Exported Functions
@@ -57,6 +69,15 @@
 reconstruct_all_paths(Vertices, Result) ->
   SortedVs = lists:sort(fun erlang:'<'/2, Vertices),
   lists:map(fun(V) -> reconstruct_path(Result, V) end, SortedVs).
+  
+%% @doc Reconstruct the flow information for a flow algortihm's result.
+%% (Algorithms included: Edmonds-Karp).
+-spec reconstruct_flow([proplists:property()]) -> flow().
+
+reconstruct_flow(L) ->
+  Flow = proplists:get_value('flow', L),
+  Es = lists:sort(L -- [{'flow', Flow}]),
+  {Flow, Es}.
   
 %% ==========================================================
 %% Internal Functions
@@ -78,7 +99,7 @@ reconstruct_path(Result, Node) ->
       {Node, 'unreachable'}
   end.
 
--spec reconstruct_path(dict(), graph:vertex(), term(), path()) -> {term(), path()}.
+-spec reconstruct_path(dict(), graph:vertex(), term(), vpath()) -> {term(), vpath()}.
 
 reconstruct_path(_Result, root, Cost, Path) ->
   {Cost, Path};

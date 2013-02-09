@@ -34,7 +34,7 @@
 %% support for undirected graphs.</p>
 %%
 %% <h3>How to use</h3>
-%% <p>In order to create a graph you must load it from a file.
+%% <p>The fastest way to create a graph is to load it from a file.
 %% The file that contains the graph must have the following format.</p>
 %% 
 %% <ul>
@@ -67,17 +67,18 @@
          num_of_edges/1, pprint/1, empty/1, add_vertex/2, add_edge/3,
          add_edge/4, graph_type/1, del_edge/2]).
 
--export_type([graph/0, vertex/0, edge/0]).
+-export_type([graph/0, vertex/0, edge/0, weight/0]).
 
 %%
 %% @type graph(). A directed or undirected graph.
 %% <p>It is wrapper for a digraph with the extra information on its type.</p>
 %%
 -record(graph, {type :: graphtype(), graph :: digraph()}).
--opaque graph()  :: #graph{}.
--type vertex() :: non_neg_integer().
--type edge()   :: {vertex(), vertex()}.
--type graphtype()  :: 'directed' | 'undirected'.
+-opaque graph()   :: #graph{}.
+-type vertex()    :: non_neg_integer().
+-type edge()      :: {vertex(), vertex()}.
+-type graphtype() :: 'directed' | 'undirected'.
+-type weight()    :: number().
 %-type weighttype() :: 'unweighted' | 'd' | 'f'.
 
 %% ==========================================================
@@ -143,7 +144,7 @@ add_edge(G, From, To) ->
   add_edge(G, From, To, 1).
   
 %% @doc Add an edge to a weighted graph
--spec add_edge(graph(), vertex(), vertex(), number()) -> edge() | {'error', 'not_numeric_weight'}.
+-spec add_edge(graph(), vertex(), vertex(), weight()) -> edge() | {'error', 'not_numeric_weight'}.
 
 add_edge(G, From, To, W) when is_number(W) -> 
   digraph:add_edge(G#graph.graph, {From, To}, From, To, W);
@@ -179,14 +180,16 @@ num_of_edges(G) ->
   end.
   
 %% @doc Return the weight of an edge
--spec edge_weight(graph(), edge()) -> term().
+-spec edge_weight(graph(), edge()) -> weight() | 'false'.
   
 edge_weight(G, E) ->
-  {E, _V1, _V2, W} = digraph:edge(G#graph.graph, E),
-  W.
+  case digraph:edge(G#graph.graph, E) of
+    {E, _V1, _V2, W} -> W;
+    'false' -> 'false'
+  end.
   
 %% @doc Return a list of the edges of a graph along with their weights
--spec edges_with_weights(graph()) -> [{edge(), term()}].
+-spec edges_with_weights(graph()) -> [{edge(), weight()}].
   
 edges_with_weights(G) ->
   Es = edges(G),

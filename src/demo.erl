@@ -93,6 +93,15 @@ graph() ->
   io:format("Kruskal : ~p~n", [Kruskal]),
   erlang:display('demo_ok').
   
+-spec flow() -> 'true'.
+flow() ->
+  {'ok', RootDir} = file:get_cwd(),
+  File = RootDir ++ "/test_data/graph3.txt",
+  G = graph:from_file(File),
+  MFlow = edmonds_karp:run(G, 0, 5),
+  io:format("Edmonds-Karp: ~p~n", [MFlow]),
+  erlang:display('demo_ok').
+  
 -spec union_find() -> 'true'.
 union_find() ->
   L = [a,b,c,d,e,f,g,h,i,j],

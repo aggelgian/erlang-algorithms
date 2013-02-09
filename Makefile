@@ -18,6 +18,7 @@ SRC_MODULES = \
 	kruskal \
 	heap \
 	union_find \
+	edmonds_karp \
 	demo \
 	doc
 

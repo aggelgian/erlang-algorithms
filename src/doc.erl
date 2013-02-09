@@ -5,6 +5,6 @@
 -spec make_doc() -> 'ok'.
 make_doc() ->
   Mods = ["graph.erl", "heap.erl", "union_find.erl", "dfs.erl", "bfs.erl", "graph_lib.erl",
-  "dijkstra.erl", "kruskal.erl"],
+  "dijkstra.erl", "kruskal.erl", "edmonds_karp.erl"],
   Fs = lists:map(fun(M) -> filename:absname("src/" ++ M) end, Mods),
   edoc:files(Fs, [{dir, "doc"}]).

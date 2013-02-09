@@ -32,7 +32,7 @@
 
 -export([run/1]).
 
--type result_set() :: {non_neg_integer(), term(), [graph:edge()]}.
+-type result_set() :: {non_neg_integer(), graph:weight(), [graph:edge()]}.
 
 %% ==========================================================
 %% Exported Functions
@@ -53,7 +53,7 @@ run(Graph) ->
 %% ==========================================================
 
 %% Initialize data structures
--spec kruskal_init(graph:graph()) -> {union_find:uf_forest(), [{graph:edge(), term()}], non_neg_integer(), result_set()}.
+-spec kruskal_init(graph:graph()) -> {union_find:uf_forest(), [{graph:edge(), graph:weight()}], non_neg_integer(), result_set()}.
 kruskal_init(Graph) ->
   Vs = graph:vertices(Graph),
   N = length(Vs),
@@ -63,7 +63,7 @@ kruskal_init(Graph) ->
   {UF, SEs, N, empty_result()}.
   
 %% Kruskal loop
--spec kruskal_step(union_find:uf_forest(), [{graph:edge(), term()}], non_neg_integer(), result_set()) -> result_set().
+-spec kruskal_step(union_find:uf_forest(), [{graph:edge(), graph:weight()}], non_neg_integer(), result_set()) -> result_set().
 kruskal_step(UF, [], _N, Res) ->
   union_find:delete(UF),
   Res;
