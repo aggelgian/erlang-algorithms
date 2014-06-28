@@ -4,11 +4,13 @@ TOP = $(PWD)
 SRC  = $(PWD)/src
 EBIN = $(PWD)/ebin
 DEMO = $(PWD)/demo/src
+DEMO_DATA = $(PWD)/demo/data
 DOC = doc
 ERLC = erlc
 
 WARNS = +warn_exported_vars +warn_unused_import +warn_missing_spec
 ERLC_FLAGS = +native +debug_info $(WARNS)
+ERLC_MACROS = -DDEMO_DATA=\"$(DEMO_DATA)\"
 
 SRC_MODULES = \
 	graph \
@@ -22,7 +24,7 @@ SRC_MODULES = \
 	edmonds_karp
 
 DEMO_MODULES = \
-	demo \
+	demo
 
 EDOC_MODULES = \
 	doc \
@@ -38,7 +40,7 @@ ERL_DIRS = \
 
 vpath %.erl $(ERL_DIRS)
 
-default: src_target
+default: src_target demo_target
 
 all: $(TARGETS) dialyze
 
@@ -49,7 +51,7 @@ demo_target: $(DEMO_MODULES:%=$(EBIN)/%.beam)
 edoc_target: $(EDOC_MODULES:%=$(EBIN)/%.beam)
 
 $(EBIN)/%.beam: %.erl
-	$(ERLC) $(ERLC_FLAGS) -o $(EBIN) $<
+	$(ERLC) $(ERLC_FLAGS) $(ERLC_MACROS) -o $(EBIN) $<
 
 edoc: $(TARGETS)
 	@(./makedoc.rb)
