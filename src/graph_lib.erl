@@ -65,7 +65,7 @@
 
 %% @doc Reconstruct all the path information from a graph algorithm's result.
 %% (Algorithms included: Dijkstra, DFS, BFS).
--spec reconstruct_all_paths([graph:vertex()], dict()) -> [path_info()].
+-spec reconstruct_all_paths([graph:vertex()], dict:dict()) -> [path_info()].
 
 reconstruct_all_paths(Vertices, Result) ->
   SortedVs = lists:sort(fun erlang:'<'/2, Vertices),
@@ -89,7 +89,7 @@ reconstruct_flow(L) ->
 %% ----------------------------------------------------------
 
 %% Result :: dict of {Node, {Cost, Prev}}
--spec reconstruct_path(dict(), graph:vertex()) -> path_info().
+-spec reconstruct_path(dict:dict(), graph:vertex()) -> path_info().
 
 reconstruct_path(Result, Node) ->
   try dict:fetch(Node, Result) of
@@ -100,7 +100,7 @@ reconstruct_path(Result, Node) ->
       {Node, 'unreachable'}
   end.
 
--spec reconstruct_path(dict(), graph:vertex(), term(), vpath()) -> {term(), vpath()}.
+-spec reconstruct_path(dict:dict(), graph:vertex(), term(), vpath()) -> {term(), vpath()}.
 
 reconstruct_path(_Result, root, Cost, Path) ->
   {Cost, Path};

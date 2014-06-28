@@ -33,8 +33,8 @@
 -export([run/2]).
 
 -type stack()   :: [{graph:vertex(), term()}].
--type states()  :: dict().
--type parents() :: dict().
+-type states()  :: dict:dict().
+-type parents() :: dict:dict().
 
 %% ----------------------------------------------------------
 %% DFS Abstractions

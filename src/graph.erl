@@ -73,7 +73,7 @@
 %% @type graph(). A directed or undirected graph.
 %% <p>It is wrapper for a digraph with the extra information on its type.</p>
 %%
--record(graph, {type :: graphtype(), graph :: digraph()}).
+-record(graph, {type :: graphtype(), graph :: digraph:graph()}).
 -opaque graph()   :: #graph{}.
 -type vertex()    :: non_neg_integer().
 -type edge()      :: {vertex(), vertex()}.

@@ -32,9 +32,9 @@
 
 -export([run/2]).
 
--type open_set()   :: gb_tree().
--type closed_set() :: dict().
--type parents()    :: dict().
+-type open_set()   :: gb_tree:tree().
+-type closed_set() :: dict:dict().
+-type parents()    :: dict:dict().
 
 %% ----------------------------------------------------------
 %% Dijkstra Abstractions

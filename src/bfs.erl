@@ -32,8 +32,8 @@
 
 -export([run/2]).
 
--type states()  :: dict().
--type parents() :: dict().
+-type states()  :: dict:dict().
+-type parents() :: dict:dict().
 
 %% ----------------------------------------------------------
 %% BFS Abstractions
@@ -74,7 +74,7 @@ run(Graph, Root) ->
 %% ==========================================================
 
 %% Initialize data structures
--spec bfs_init(graph:graph(), graph:vertex()) -> {queue(), states(), parents()}.
+-spec bfs_init(graph:graph(), graph:vertex()) -> {queue:queue(), states(), parents()}.
 bfs_init(Graph, Root) ->
   EQ = ?EMPTY_QUEUE(),
   EM = ?EMPTY_STATES(),
@@ -90,7 +90,7 @@ bfs_init(Graph, Root) ->
   {NQ, NxtM, NP}.
 
 %% BFS loop
--spec bfs_step(graph:graph(), queue(), states(), parents()) -> parents().
+-spec bfs_step(graph:graph(), queue:queue(), states(), parents()) -> parents().
 bfs_step(Graph, Q, M, P) ->
   case ?IS_EMPTY(Q) of
     'true' ->
