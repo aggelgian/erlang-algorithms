@@ -1,8 +1,9 @@
 .PHONY: clean all distclean
 
 TOP = $(PWD)
-SRC = src
-EBIN = ebin
+SRC  = $(PWD)/src
+EBIN = $(PWD)/ebin
+DEMO = $(PWD)/demo/src
 DOC = doc
 ERLC = erlc
 
@@ -18,29 +19,43 @@ SRC_MODULES = \
 	kruskal \
 	heap \
 	union_find \
-	edmonds_karp \
+	edmonds_karp
+
+DEMO_MODULES = \
 	demo \
-	doc
+
+EDOC_MODULES = \
+	doc \
 
 TARGETS = \
-	src_target
+	src_target \
+	demo_target \
+	edoc_target
 
 ERL_DIRS = \
-	src
+	$(SRC) \
+	$(DEMO)
 
 vpath %.erl $(ERL_DIRS)
 
-default: $(TARGETS)
+default: src_target
 
-all: default dialyze
+all: $(TARGETS) dialyze
 
 src_target: $(SRC_MODULES:%=$(EBIN)/%.beam)
+
+demo_target: $(DEMO_MODULES:%=$(EBIN)/%.beam)
+
+edoc_target: $(EDOC_MODULES:%=$(EBIN)/%.beam)
 
 $(EBIN)/%.beam: %.erl
 	$(ERLC) $(ERLC_FLAGS) -o $(EBIN) $<
 
 edoc: $(TARGETS)
 	@(./makedoc.rb)
+
+demo: $(TARGETS)
+	@(./rundemo.rb)
 
 dialyze: $(TARGETS)
 	dialyzer -n -Wunmatched_returns $(EBIN)/*.beam

@@ -81,7 +81,7 @@ max_heaps() ->
 graph() ->
   X = 0,
   {'ok', RootDir} = file:get_cwd(),
-  File = RootDir ++ "/test_data/graph1.txt",
+  File = RootDir ++ "/demo/data/graph1.txt",
   G = graph:from_file(File),
   Dijkstra = dijkstra:run(G, X),
   BFS = bfs:run(G,X),
@@ -96,7 +96,7 @@ graph() ->
 -spec flow() -> 'true'.
 flow() ->
   {'ok', RootDir} = file:get_cwd(),
-  File = RootDir ++ "/test_data/graph3.txt",
+  File = RootDir ++ "/demo/data/graph3.txt",
   G = graph:from_file(File),
   Edmonds = edmonds_karp:run(G, 0, 5, 'bfs'),
   Ford = edmonds_karp:run(G, 0, 5, 'dfs'),

@@ -32,7 +32,7 @@
 
 -export([run/2]).
 
--type open_set()   :: gb_tree:tree().
+-type open_set()   :: gb_trees:tree().
 -type closed_set() :: dict:dict().
 -type parents()    :: dict:dict().
 

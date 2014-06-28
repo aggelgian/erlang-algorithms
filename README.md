@@ -23,6 +23,7 @@ How to Compile and Run
 *  Compile the source code and the demo : `make`
 *  Run dialyzer : `make dialyze`
 *  All of the above : `make all`
+*  Run the demo : `make demo`
 *  Make edoc : `make edoc`
 
 The file demo.erl contains some functions that demostrate the code in action.
