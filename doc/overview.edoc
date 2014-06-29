@@ -1,5 +1,5 @@
 @author Aggelos Giantsios
-@copyright 2013 Aggelos Giantsios
+@copyright 2013-2014 Aggelos Giantsios
 @title Welcome to erlang-algorithms!
 @doc The goal of this project is to implement some useful algorithms and data structures in Erlang so as to help anyone who may need them.
 

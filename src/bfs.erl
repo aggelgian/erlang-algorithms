@@ -27,6 +27,8 @@
 %% ============================================================================
 %% @doc BFS Algorithm
 %%
+%% <p>For examples you can check the <code>bfs_demo</code> module.</p>
+%% 
 
 -module(bfs).
 
