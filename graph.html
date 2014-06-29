@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Module graph</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
@@ -11,20 +11,20 @@
 
 <h1>Module graph</h1>
 <ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Directed / Undirected Graphs.
-<p>Copyright © 2013 Aggelos Giantsios</p>
+<p>Copyright Â© 2013-2014 Aggelos Giantsios</p>
 
 <p><b>Authors:</b> Aggelos Giantsios.</p>
 
 <h2><a name="description">Description</a></h2><p>Directed / Undirected Graphs</p>
  
   <p>This module implements directed and undirected graphs that are either
-  weighted or unweighted.</p>
+  weighted with numeric weights or unweighted.</p>
  
   <p>It is basically syntactic sugar for the digraph module with added
   support for undirected graphs.</p>
  
   <h3>How to use</h3>
-  <p>The fastest way to create a graph is to load it from a file.
+  <p>The fastest way to create a graph is to load it from a file with <code>from_file/1</code>.
   The file that contains the graph must have the following format.</p>
  
   <ul>
@@ -44,10 +44,31 @@
     </li>
     <li>The next M lines will consist of the edge descriptions.
         Each line will contain three terms : U V W.
-        This will denote an edge from U to V with W weight.</li>
+        This will denote an edge from U to V with W weight (W applies only if the graph is weighted).</li>
   </ul>
  
-  <p>For examples you can check the files in the test_data directory.</p>
+  <h3>Alternative syntax</h3>
+  <p>There is also the ability to explicitly state the vertices of the graph and load the graph with <code>from_file/3</code>.
+  In this case the above format is amended as follows:</p>
+ 
+  <ul>
+    <li>
+      The 1st line remains unchanged.
+    </li>
+    <li>
+      The 2nd line consists of the vertices. The user will provide a function that will parse this line and return
+      a list of the vertices. The spec of this function is
+      <code>fun(file:io_device(), integer()) -&gt; [vertex()].</code>
+    </li>
+    <li>
+      The next M lines that consist of the edge descriptions remain unchanged.
+      However, the user will provide a function that will parse each line and return
+      the three required terms : U V W. The spec of this function is
+      <code>fun(file:io_device(), weighttype()) -&gt; {vertex(), vertex(), weight()}.</code>
+    </li>
+  </ul>
+ 
+  <p>For examples you can check the <code>graph_demo</code> module.</p>
  
 <h2><a name="types">Data Types</a></h2>
 
@@ -66,12 +87,12 @@
 
 
 <h3 class="typedecl"><a name="type-vertex">vertex()</a></h3>
-<p><tt>vertex() = non_neg_integer()</tt></p>
+<p><tt>vertex() = term()</tt></p>
 
 
 <h3 class="typedecl"><a name="type-weight">weight()</a></h3>
 <p><tt>weight() = number()</tt></p>
-<p>-type weighttype() :: 'unweighted' | 'd' | 'f'.</p>
+
 
 <h2><a name="index">Function Index</a></h2>
 <table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_edge-3">add_edge/3</a></td><td>Add an edge to an unweighted graph.</td></tr>
@@ -83,7 +104,8 @@
 <tr><td valign="top"><a href="#edges-1">edges/1</a></td><td>Return a list of the edges of a graph.</td></tr>
 <tr><td valign="top"><a href="#edges_with_weights-1">edges_with_weights/1</a></td><td>Return a list of the edges of a graph along with their weights.</td></tr>
 <tr><td valign="top"><a href="#empty-1">empty/1</a></td><td>Create a new empty graph.</td></tr>
-<tr><td valign="top"><a href="#from_file-1">from_file/1</a></td><td>Create a new graph from a file.</td></tr>
+<tr><td valign="top"><a href="#from_file-1">from_file/1</a></td><td>Create a new graph from a file using the default behaviour.</td></tr>
+<tr><td valign="top"><a href="#from_file-3">from_file/3</a></td><td>Create a new graph from a file using a custo behaviour.</td></tr>
 <tr><td valign="top"><a href="#graph_type-1">graph_type/1</a></td><td>Return the type of the graph.</td></tr>
 <tr><td valign="top"><a href="#num_of_edges-1">num_of_edges/1</a></td><td>Return the number of edges in a graph.</td></tr>
 <tr><td valign="top"><a href="#num_of_vertices-1">num_of_vertices/1</a></td><td>Return the number of vertices in a graph.</td></tr>
@@ -97,11 +119,12 @@
 <h3 class="function"><a name="add_edge-3">add_edge/3</a></h3>
 <div class="spec">
 <p><tt>add_edge(G::<a href="#type-graph">graph()</a>, From::<a href="#type-vertex">vertex()</a>, To::<a href="#type-vertex">vertex()</a>) -&gt; <a href="#type-edge">edge()</a></tt><br></p>
-</div><p>Add an edge to an unweighted graph.</p>
+</div><p>Add an edge to an unweighted graph.
+  <p>Create an edge with unit weight/</p></p>
 
 <h3 class="function"><a name="add_edge-4">add_edge/4</a></h3>
 <div class="spec">
-<p><tt>add_edge(G::<a href="#type-graph">graph()</a>, From::<a href="#type-vertex">vertex()</a>, To::<a href="#type-vertex">vertex()</a>, W::<a href="#type-weight">weight()</a>) -&gt; <a href="#type-edge">edge()</a> | {error, not_numeric_weight}</tt><br></p>
+<p><tt>add_edge(Graph::<a href="#type-graph">graph()</a>, From::<a href="#type-vertex">vertex()</a>, To::<a href="#type-vertex">vertex()</a>, W::<a href="#type-weight">weight()</a>) -&gt; <a href="#type-edge">edge()</a> | {error, not_numeric_weight}</tt><br></p>
 </div><p>Add an edge to a weighted graph</p>
 
 <h3 class="function"><a name="add_vertex-2">add_vertex/2</a></h3>
@@ -142,7 +165,21 @@
 <h3 class="function"><a name="from_file-1">from_file/1</a></h3>
 <div class="spec">
 <p><tt>from_file(File::<a href="file.html#type-name">file:name()</a>) -&gt; <a href="#type-graph">graph()</a></tt><br></p>
-</div><p>Create a new graph from a file.</p>
+</div><p>Create a new graph from a file using the default behaviour.</p>
+
+<h3 class="function"><a name="from_file-3">from_file/3</a></h3>
+<div class="spec">
+<p><tt>from_file(File::<a href="file.html#type-name">file:name()</a>, ReadVertices::function(), ReadEdge::function()) -&gt; <a href="#type-graph">graph()</a></tt><br></p>
+</div><p>Create a new graph from a file using a custo behaviour.
+  <p>The user must provide the 2 functions for reading the vertices and the
+  edge descriptions.</p>
+ 
+  <p>ReadVertices will take the file descriptor and the number of vertices and
+  return the list of the vertices.</p>
+ 
+  <p>ReadEdge will take the file descriptor and the type of the weights of the graph and
+  return the tuple {V1, V2, W}, where V1 is the start of the edge, V2 is the end of the edge
+  and W is the weight of the edge (for unweighted graphs the edge must be 1).</p></p>
 
 <h3 class="function"><a name="graph_type-1">graph_type/1</a></h3>
 <div class="spec">
@@ -176,6 +213,6 @@
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Feb 9 2013, 14:07:31.</i></p>
+<p><i>Generated by EDoc, Jun 29 2014, 21:39:28.</i></p>
 </body>
 </html>
