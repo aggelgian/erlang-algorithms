@@ -64,9 +64,8 @@
 %% with <code>Root</code> as point of origin
 -spec run(graph:graph(), graph:vertex()) -> [graph_lib:path_info()].
 run(Graph, Root) ->
-  {Q, M, P} = bfs_init(Graph, Root),
+  {Q, M, P, Vertices} = bfs_init(Graph, Root),
   Result = bfs_step(Graph, Q, M, P),
-  Vertices = graph:vertices(Graph),
   graph_lib:reconstruct_all_paths(Vertices, Result).
 
 %% ==========================================================
@@ -74,46 +73,39 @@ run(Graph, Root) ->
 %% ==========================================================
 
 %% Initialize data structures
--spec bfs_init(graph:graph(), graph:vertex()) -> {queue:queue(), states(), parents()}.
+-spec bfs_init(graph:graph(), graph:vertex()) -> {queue:queue(), states(), parents(), [graph:vertex()]}.
 bfs_init(Graph, Root) ->
-  EQ = ?EMPTY_QUEUE(),
-  EM = ?EMPTY_STATES(),
-  EP = ?EMPTY_PARENTS(),
-  NQ = ?ADD_TO_QUEUE(Root, 0, EQ),
-  NM = ?SET_STATE(Root, 'Y', EM),
-  NP = ?ADD_TO_PARENTS(Root, 0, 'root', EP),
-  Vs = graph:vertices(Graph) -- [Root],
-  NxtM =
-    lists:foldl(
-      fun(V, M) -> ?SET_STATE(V, 'A', M) end,
-      NM, Vs),
-  {NQ, NxtM, NP}.
+  Q = ?ADD_TO_QUEUE(Root, 0, ?EMPTY_QUEUE()),
+  Ps = ?ADD_TO_PARENTS(Root, 0, root, ?EMPTY_PARENTS()),
+  Vs = graph:vertices(Graph),
+  Ms = lists:foldl(fun(V, M) -> ?SET_STATE(V, 'A', M) end, ?EMPTY_STATES(), Vs),
+  NMs = ?SET_STATE(Root, 'Y', Ms),
+  {Q, NMs, Ps, Vs}.
 
 %% BFS loop
 -spec bfs_step(graph:graph(), queue:queue(), states(), parents()) -> parents().
-bfs_step(Graph, Q, M, P) ->
-  case ?IS_EMPTY(Q) of
-    'true' ->
-      P;
-    'false' ->
-      {{U, UCost}, NQ} = ?EXTRACT_FROM_QUEUE(Q),
-      NM = ?SET_STATE(U, 'E', M),
+bfs_step(Graph, Qe, Ms, Ps) ->
+  case ?IS_EMPTY(Qe) of
+    true -> Ps;
+    false ->
+      {{U, UCost}, NQ} = ?EXTRACT_FROM_QUEUE(Qe),
+      NMs = ?SET_STATE(U, 'E', Ms),
       Neighbours = graph:out_neighbours(Graph, U),
       {NxtQ, NxtM, NxtP} =
         lists:foldl(
-          fun(V, {FQ, FM, FP}) ->
-            case ?GET_STATE(V, FM) of
+          fun(V, {Q, M, P}) ->
+            case ?GET_STATE(V, M) of
               'A' ->
                 W = graph:edge_weight(Graph, {U, V}),
-                QQ = ?ADD_TO_QUEUE(V, UCost + W, FQ),
-                MM = ?SET_STATE(V, 'Y', FM),
-                PP = ?ADD_TO_PARENTS(V, UCost + W, U, FP),
+                Cost = UCost + W,
+                QQ = ?ADD_TO_QUEUE(V, Cost, Q),
+                MM = ?SET_STATE(V, 'Y', M),
+                PP = ?ADD_TO_PARENTS(V, Cost, U, P),
                 {QQ, MM, PP};
-              _ ->
-                {FQ, FM, FP}
+              _ -> {Q, M, P}
             end
           end,
-          {NQ, NM, P},
+          {NQ, NMs, Ps},
           Neighbours
         ),
       bfs_step(Graph, NxtQ, NxtM, NxtP)

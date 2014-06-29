@@ -9,6 +9,13 @@ puts `erl -noshell -pa ebin -eval "graph_demo:from_file_custom()" -s init stop`
 puts "\ngraph_demo:manual()"
 puts `erl -noshell -pa ebin -eval "graph_demo:manual()" -s init stop`
 
+puts "\nBFS Algorithm"
+puts "==============="
+puts "\nbfs_demo:s1()"
+puts `erl -noshell -pa ebin -eval "bfs_demo:s1()" -s init stop`
+puts "\nbfs_demo:s2()"
+puts `erl -noshell -pa ebin -eval "bfs_demo:s2()" -s init stop`
+
 
 puts "\nMin Heaps"
 puts `erl -noshell -pa ebin -eval "demo:min_heaps()" -s init stop`
