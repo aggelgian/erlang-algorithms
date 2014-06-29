@@ -9,19 +9,21 @@ puts `erl -noshell -pa ebin -eval "graph_demo:from_file_custom()" -s init stop`
 puts "\ngraph_demo:manual()"
 puts `erl -noshell -pa ebin -eval "graph_demo:manual()" -s init stop`
 
+puts "\nHeaps"
+puts "======"
+puts "\nheap_demo:min_heap()"
+puts `erl -noshell -pa ebin -eval "heap_demo:min_heap()" -s init stop`
+puts "\nheap_demo:max_heap()"
+puts `erl -noshell -pa ebin -eval "heap_demo:max_heap()" -s init stop`
+
 puts "\nBFS Algorithm"
-puts "==============="
+puts "=============="
 puts "\nbfs_demo:s1()"
 puts `erl -noshell -pa ebin -eval "bfs_demo:s1()" -s init stop`
 puts "\nbfs_demo:s2()"
 puts `erl -noshell -pa ebin -eval "bfs_demo:s2()" -s init stop`
 
 
-puts "\nMin Heaps"
-puts `erl -noshell -pa ebin -eval "demo:min_heaps()" -s init stop`
-
-puts "Max Heaps"
-puts `erl -noshell -pa ebin -eval "demo:max_heaps()" -s init stop`
 
 puts "Union - Find"
 puts `erl -noshell -pa ebin -eval "demo:union_find()" -s init stop`

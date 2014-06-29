@@ -26,6 +26,7 @@ SRC_MODULES = \
 DEMO_MODULES = \
 	demo \
 	graph_demo \
+	heap_demo \
 	bfs_demo
 
 EDOC_MODULES = \
