@@ -1,0 +1,8 @@
+5 6 directed d
+a b c d e f
+a c 3
+a b 5
+c e 3
+e d 3
+d f 1
+f c 7

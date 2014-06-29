@@ -24,7 +24,8 @@ SRC_MODULES = \
 	edmonds_karp
 
 DEMO_MODULES = \
-	demo
+	demo \
+	graph_demo
 
 EDOC_MODULES = \
 	doc \

@@ -1,6 +1,16 @@
 #! /usr/bin/env ruby
 
-puts "Min Heaps"
+puts "Creating Graphs"
+puts "==============="
+puts "\ngraph_demo:from_file_default()"
+puts `erl -noshell -pa ebin -eval "graph_demo:from_file_default()" -s init stop`
+puts "\ngraph_demo:from_file_custom()"
+puts `erl -noshell -pa ebin -eval "graph_demo:from_file_custom()" -s init stop`
+puts "\ngraph_demo:manual()"
+puts `erl -noshell -pa ebin -eval "graph_demo:manual()" -s init stop`
+
+
+puts "\nMin Heaps"
 puts `erl -noshell -pa ebin -eval "demo:min_heaps()" -s init stop`
 
 puts "Max Heaps"

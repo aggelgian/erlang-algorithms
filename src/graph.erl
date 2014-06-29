@@ -28,7 +28,7 @@
 %% @doc Directed / Undirected Graphs
 %%
 %% <p>This module implements directed and undirected graphs that are either 
-%% weighted or unweighted.</p>
+%% weighted with numeric weights or unweighted.</p>
 %%
 %% <p>It is basically syntactic sugar for the digraph module with added 
 %% support for undirected graphs.</p>
@@ -78,7 +78,7 @@
 %%   </li>
 %% </ul>
 %% 
-%% <p>For examples you can check the files in the test_data directory.</p>
+%% <p>For examples you can check the <code>graph_demo</code> module.</p>
 %% 
 
 -module(graph).
@@ -177,17 +177,8 @@ init_vertices(IO, Graph, N, ReadVertices) ->
 init_edges(_IO, _G, 0, _ReadEdge, _T, _WT) -> ok;
 init_edges(IO, G, M, ReadEdge, T, WT) ->
   {V1, V2, W} = ReadEdge(IO, WT),
-  _ = init_edge(G, T, V1, V2, W),
-  init_edges(IO, G, M-1, ReadEdge, T, WT).
-
--spec init_edge(graph(), graphtype(), vertex(), vertex(), weight()) -> edge().
-
-init_edge(G, directed, V1, V2, W) ->
-  add_edge(G, V1, V2, W);
-init_edge(G, undirected, V1, V2, W) ->
   _ = add_edge(G, V1, V2, W),
-  add_edge(G, V2, V1, W).
-
+  init_edges(IO, G, M-1, ReadEdge, T, WT).
 
 %% @doc Delete a graph
 -spec del_graph(graph()) -> 'true'.
@@ -220,6 +211,7 @@ num_of_vertices(G) ->
   digraph:no_vertices(G#graph.graph).
   
 %% @doc Add an edge to an unweighted graph.
+%% <p>Create an edge with unit weight/</p>
 -spec add_edge(graph(), vertex(), vertex()) -> edge().
 
 add_edge(G, From, To) ->
@@ -228,11 +220,15 @@ add_edge(G, From, To) ->
 %% @doc Add an edge to a weighted graph
 -spec add_edge(graph(), vertex(), vertex(), weight()) -> edge() | {error, not_numeric_weight}.
 
-add_edge(G, From, To, W) when is_number(W) -> 
-  digraph:add_edge(G#graph.graph, {From, To}, From, To, W);
+add_edge(#graph{type=directed, graph=G}, From, To, W) when is_number(W) ->
+  digraph:add_edge(G, {From, To}, From, To, W);
+add_edge(#graph{type=undirected, graph=G}, From, To, W) when is_number(W) ->
+  digraph:add_edge(G, {From, To}, From, To, W),
+  digraph:add_edge(G, {To, From}, To, From, W);
 add_edge(_G, _From, _To, _W) ->
   {error, not_numeric_weight}.
-  
+
+
 %% @doc Delete an edge from a graph
 -spec del_edge(graph(), edge()) -> 'true'.
 
@@ -241,14 +237,12 @@ del_edge(G, E) ->
   
 %% @doc Return a list of the edges of a graph
 -spec edges(graph()) -> [edge()].
-  
+
 edges(G) ->
   Es = digraph:edges(G#graph.graph),
   case G#graph.type of
-    'directed' ->
-      Es;
-    'undirected' ->
-      remove_duplicate_edges(Es, [])
+    directed -> Es;
+    undirected -> remove_duplicate_edges(Es, [])
   end.
 
 %% Remove the duplicate edges of a undirected graph
@@ -263,8 +257,8 @@ remove_duplicate_edges([{From, To}=E|Es], Acc) ->
 num_of_edges(G) ->
   M = digraph:no_edges(G#graph.graph),
   case G#graph.type of
-    'directed'   -> M;
-    'undirected' -> M div 2
+    directed -> M;
+    undirected -> M div 2
   end.
   
 %% @doc Return the weight of an edge
@@ -273,7 +267,7 @@ num_of_edges(G) ->
 edge_weight(G, E) ->
   case digraph:edge(G#graph.graph, E) of
     {E, _V1, _V2, W} -> W;
-    'false' -> 'false'
+    false -> false
   end.
   
 %% @doc Return a list of the edges of a graph along with their weights
@@ -290,7 +284,7 @@ out_neighbours(G, V) ->
   digraph:out_neighbours(G#graph.graph, V).
   
 %% @doc Pretty print a graph
--spec pprint(graph()) -> 'ok'.
+-spec pprint(graph()) -> ok.
   
 pprint(G) ->
   Vs = digraph:vertices(G#graph.graph),
