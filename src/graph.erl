@@ -1,7 +1,7 @@
 %%
 %% %CopyrightBegin%
 %%
-%% Copyright © 2013 Aggelos Giantsios
+%% Copyright © 2013-2014 Aggelos Giantsios
 %%
 %% Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
 %% and associated documentation files (the “Software”), to deal in the Software without restriction, 
@@ -21,7 +21,7 @@
 %% %CopyrightEnd%
 %%
 
-%% @copyright 2013 Aggelos Giantsios
+%% @copyright 2013-2014 Aggelos Giantsios
 %% @author Aggelos Giantsios
 
 %% ============================================================================
