@@ -16,6 +16,11 @@ puts `erl -noshell -pa ebin -eval "heap_demo:min_heap()" -s init stop`
 puts "\nheap_demo:max_heap()"
 puts `erl -noshell -pa ebin -eval "heap_demo:max_heap()" -s init stop`
 
+puts "\nUnion Find"
+puts "==========="
+puts "\nunion_find_demo:uf1()"
+puts `erl -noshell -pa ebin -eval "union_find_demo:uf1()" -s init stop`
+
 puts "\nBFS Algorithm"
 puts "=============="
 puts "\nbfs_demo:s1()"
@@ -24,9 +29,6 @@ puts "\nbfs_demo:s2()"
 puts `erl -noshell -pa ebin -eval "bfs_demo:s2()" -s init stop`
 
 
-
-puts "Union - Find"
-puts `erl -noshell -pa ebin -eval "demo:union_find()" -s init stop`
 
 puts "Dijkstra, BFS and DFS algorithms"
 puts `erl -noshell -pa ebin -eval "demo:graph()" -s init stop`

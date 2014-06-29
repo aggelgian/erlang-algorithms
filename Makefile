@@ -27,6 +27,7 @@ DEMO_MODULES = \
 	demo \
 	graph_demo \
 	heap_demo \
+	union_find_demo \
 	bfs_demo
 
 EDOC_MODULES = \
