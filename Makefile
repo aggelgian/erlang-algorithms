@@ -31,7 +31,8 @@ DEMO_MODULES = \
 	bfs_demo \
 	dfs_demo \
 	dijkstra_demo \
-	kruskal_demo
+	kruskal_demo \
+	flow_demo
 
 EDOC_MODULES = \
 	doc \

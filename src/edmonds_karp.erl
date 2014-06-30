@@ -28,13 +28,15 @@
 %% @doc Edmonds-Karp / Ford-Fulkerson Algorithms
 %%
 %% <p>Calculates the Maximum Flow in a Network (Directed Graph)</p>
-%%
+%% 
+%% <p>For examples you can check the <code>flow_demo</code> module.</p>
+%% 
 
 -module(edmonds_karp).
 
 -export([run/4]).
 
--type mode() :: 'bfs' | 'dfs'.
+-type mode() :: bfs | dfs.
 
 %% ==========================================================
 %% Exported Functions
@@ -50,14 +52,14 @@
 %%
 -spec run(graph:graph(), graph:vertex(), graph:vertex(), mode()) -> graph_lib:flow() | {'error', 'not_network'}.
 
-run(G, S, T, Mode) when Mode =:= 'bfs'; Mode =:= 'dfs' ->
+run(G, S, T, Mode) when Mode =:= bfs; Mode =:= dfs ->
   case graph:graph_type(G) of
-    'directed' ->
+    directed ->
       {Flow, RN} = init_residual_network(G),
-      'ok' = edmonds_karp_step(G, RN, Flow, S, T, Mode),
+      ok = edmonds_karp_step(G, RN, Flow, S, T, Mode),
       graph_lib:reconstruct_flow(ets:tab2list(Flow));
-    'undirected' ->
-      {'error', 'not_network'}
+    undirected ->
+      {error, not_network}
   end.
 
 %% ==========================================================
@@ -68,8 +70,7 @@ run(G, S, T, Mode) when Mode =:= 'bfs'; Mode =:= 'dfs' ->
 -spec edmonds_karp_step(graph:graph(), graph:graph(), ets:tid(), graph:vertex(), graph:vertex(), mode()) -> 'ok'.
 edmonds_karp_step(G, RN, Flow, S, T, M) ->
   case augmenting_path(RN, S, T, M) of
-    'no_path' ->
-      'ok';
+    no_path -> ok;
     EPath ->
       RN_n = update_residual_network(G, RN, Flow, EPath),
       edmonds_karp_step(G, RN_n, Flow, S, T, M)
@@ -80,9 +81,9 @@ edmonds_karp_step(G, RN, Flow, S, T, M) ->
 init_residual_network(G) ->
   Vs = graph:vertices(G),
   Es = graph:edges_with_weights(G),
-  RN = graph:empty('directed'),
-  F = ets:new(f, ['ordered_set']),
-  ets:insert(F, {'flow', 0}),
+  RN = graph:empty(directed),
+  F = ets:new(f, [ordered_set]),
+  ets:insert(F, {flow, 0}),
   lists:foreach(fun({E, _W}) -> ets:insert(F, {E, 0}) end, Es),
   lists:foreach(fun(V) -> graph:add_vertex(RN, V) end, Vs),
   lists:foreach(fun({{U, V}, W}) -> graph:add_edge(RN, U, V, W) end, Es),
@@ -93,19 +94,18 @@ init_residual_network(G) ->
 augmenting_path(RN, S, T, M) ->
   Traversal =
     case M of
-      'dfs' -> dfs:run(RN, S);
-      'bfs' -> bfs:run(RN, S)
+      dfs -> dfs:run(RN, S);
+      bfs -> bfs:run(RN, S)
     end,
   case proplists:get_value(T, Traversal) of
-    'unreachable'  -> 'no_path';
+    unreachable  -> no_path;
     {_Cost, VPath} -> path_edges(RN, VPath)
   end.
 
 %% Return the edges visited in a path
 -spec path_edges(graph:graph(), graph_lib:vpath()) -> graph_lib:epath_weighted().
-path_edges(RN, Path) ->
-  path_edges(RN, Path, []).
-  
+path_edges(RN, Path) -> path_edges(RN, Path, []).
+
 %% Helper funciton path_edges/3
 -spec path_edges(graph:graph(), graph_lib:vpath(), graph_lib:epath_weighted()) -> graph_lib:epath_weighted().
 path_edges(_RN, [_V], Es) ->
@@ -122,15 +122,15 @@ update_residual_network(G, RN, Flow, EPath) ->
   %% Get the flow increase
   [{_, Cf}|_] = lists:sort(fun({_E1, W1}, {_E2, W2}) -> W1 < W2 end, EPath),
   %% Update the flow
-  [{'flow', CurrFlow}] = ets:lookup(Flow, 'flow'),
-  ets:insert(Flow, {'flow', CurrFlow+Cf}),
+  [{flow, CurrFlow}] = ets:lookup(Flow, flow),
+  ets:insert(Flow, {flow, CurrFlow + Cf}),
   %% Update the residual network
   lists:foreach(
     fun({{U, V}, _W}) ->
       {{From, To}=E, W} =
         case {graph:edge_weight(G, {U,V}), graph:edge_weight(G, {V,U})} of
-          {'false', C} -> {{V, U}, C};
-          {C, 'false'} -> {{U, V}, C}
+          {false, C} -> {{V, U}, C};
+          {C, false} -> {{U, V}, C}
         end,
       graph:del_edge(RN, {U, V}),
       graph:del_edge(RN, {V, U}),
@@ -139,11 +139,11 @@ update_residual_network(G, RN, Flow, EPath) ->
       ets:insert(Flow, {E, NF}),
       _ = case W-NF > 0 of
         true  -> graph:add_edge(RN, From, To, W-NF);
-        false -> 'ok'
+        false -> ok
       end,
       _ = case NF > 0 of
         true  -> graph:add_edge(RN, To, From, NF);
-        false -> 'ok'
+        false -> ok
       end
     end,
     EPath

@@ -36,20 +36,21 @@ puts "\ndfs_demo:s2()"
 puts `erl -noshell -pa ebin -eval "dfs_demo:s2()" -s init stop`
 
 puts "\nDijkstra Algorithm"
-puts "=============="
+puts "==================="
 puts "\ndijkstra_demo:s1()"
 puts `erl -noshell -pa ebin -eval "dijkstra_demo:s1()" -s init stop`
 puts "\ndijkstra_demo:s2()"
 puts `erl -noshell -pa ebin -eval "dijkstra_demo:s2()" -s init stop`
 
 puts "\nKruskal Algorithm"
-puts "=============="
+puts "=================="
 puts "\nkruskal_demo:s1()"
 puts `erl -noshell -pa ebin -eval "kruskal_demo:s1()" -s init stop`
 puts "\nkruskal_demo:s2()"
 puts `erl -noshell -pa ebin -eval "kruskal_demo:s2()" -s init stop`
 
+puts "\nEdmonds-Karp and Ford-Fulkerson algorithms"
+puts "==========================================="
+puts "\nflow_demo:s1()"
+puts `erl -noshell -pa ebin -eval "flow_demo:s1()" -s init stop`
 
-
-puts "Edmonds-Karp and Ford-Fulkerson algorithms"
-puts `erl -noshell -pa ebin -eval "demo:flow()" -s init stop`
