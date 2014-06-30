@@ -8,12 +8,8 @@ graph() ->
   File = RootDir ++ "/demo/data/graph1.txt",
   G = graph:from_file(File),
   Dijkstra = dijkstra:run(G, X),
-  BFS = bfs:run(G,X),
-  DFS = dfs:run(G,X),
   Kruskal = kruskal:run(G),
   io:format("Dijkstra : ~p~n", [Dijkstra]),
-  io:format("BFS : ~p~n", [BFS]),
-  io:format("DFS : ~p~n", [DFS]),
   io:format("Kruskal : ~p~n", [Kruskal]),
   erlang:display('demo_ok').
   

@@ -27,6 +27,8 @@
 %% ============================================================================
 %% @doc DFS Algorithm
 %%
+%% <p>For examples you can check the <code>dfs_demo</code> module.</p>
+%% 
 
 -module(dfs).
 
@@ -64,9 +66,8 @@
 %% with <code>Root</code> as point of origin
 -spec run(graph:graph(), graph:vertex()) -> [graph_lib:path_info()].
 run(Graph, Root) ->
-  {S, M, P} = dfs_init(Graph, Root),
+  {S, M, P, Vertices} = dfs_init(Graph, Root),
   Result = dfs_step(Graph, S, M, P),
-  Vertices = graph:vertices(Graph),
   graph_lib:reconstruct_all_paths(Vertices, Result).
   
 %% ==========================================================
@@ -74,27 +75,21 @@ run(Graph, Root) ->
 %% ==========================================================
 
 %% Initialize data structures
--spec dfs_init(graph:graph(), graph:vertex()) -> {stack(), states(), parents()}.
+-spec dfs_init(graph:graph(), graph:vertex()) -> {stack(), states(), parents(), [graph:vertex()]}.
 dfs_init(Graph, Root) ->
-  ES = ?EMPTY_STACK(),
-  EM = ?EMPTY_STATES(),
-  EP = ?EMPTY_PARENTS(),
-  NS = ?ADD_TO_STACK(Root, 0, ES),
-  NP = ?ADD_TO_PARENTS(Root, 0, 'root', EP),
+  Ms = ?EMPTY_STATES(),
+  S = ?ADD_TO_STACK(Root, 0, ?EMPTY_STACK()),
+  Ps = ?ADD_TO_PARENTS(Root, 0, root, ?EMPTY_PARENTS()),
   Vs = graph:vertices(Graph),
-  NxtM =
-    lists:foldl(
-      fun(V, M) -> ?SET_STATE(V, 'A', M) end,
-      EM, Vs),
-  {NS, NxtM, NP}.
+  NMs = lists:foldl(fun(V, M) -> ?SET_STATE(V, 'A', M) end, Ms, Vs),
+  {S, NMs, Ps, Vs}.
   
 %% DFS loop
 -spec dfs_step(graph:graph(), stack(), states(), parents()) -> parents().
 dfs_step(Graph, S, M, P) ->
   case ?IS_EMPTY(S) of
-    'true' ->
-      P;
-    'false' ->
+    true -> P;
+    false ->
       {{V, Cost}, NS} = ?REMOVE_FROM_STACK(S),
       NM = ?SET_STATE(V, 'Y', M),
       Neighbours = graph:out_neighbours(Graph, V),
@@ -104,8 +99,9 @@ dfs_step(Graph, S, M, P) ->
             case ?GET_STATE(U, NM) of
               'A' ->
                 W = graph:edge_weight(Graph, {V, U}),
-                SS = ?ADD_TO_STACK(U, Cost + W, FS),
-                PP = ?ADD_TO_PARENTS(U, Cost + W, V, FP),
+                NCost = Cost + W,
+                SS = ?ADD_TO_STACK(U, NCost, FS),
+                PP = ?ADD_TO_PARENTS(U, NCost, V, FP),
                 {PP, SS};
               _ ->
                 {FP, FS}
