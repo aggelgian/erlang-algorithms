@@ -7,9 +7,7 @@ graph() ->
   {'ok', RootDir} = file:get_cwd(),
   File = RootDir ++ "/demo/data/graph1.txt",
   G = graph:from_file(File),
-  Dijkstra = dijkstra:run(G, X),
   Kruskal = kruskal:run(G),
-  io:format("Dijkstra : ~p~n", [Dijkstra]),
   io:format("Kruskal : ~p~n", [Kruskal]),
   erlang:display('demo_ok').
   

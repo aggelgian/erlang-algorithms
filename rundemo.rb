@@ -35,6 +35,13 @@ puts `erl -noshell -pa ebin -eval "dfs_demo:s1()" -s init stop`
 puts "\ndfs_demo:s2()"
 puts `erl -noshell -pa ebin -eval "dfs_demo:s2()" -s init stop`
 
+puts "\nDijkstra Algorithm"
+puts "=============="
+puts "\ndijkstra_demo:s1()"
+puts `erl -noshell -pa ebin -eval "dijkstra_demo:s1()" -s init stop`
+puts "\ndijkstra_demo:s2()"
+puts `erl -noshell -pa ebin -eval "dijkstra_demo:s2()" -s init stop`
+
 
 
 puts "Dijkstra, BFS and DFS algorithms"

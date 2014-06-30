@@ -29,7 +29,8 @@ DEMO_MODULES = \
 	heap_demo \
 	union_find_demo \
 	bfs_demo \
-	dfs_demo
+	dfs_demo \
+	dijkstra_demo
 
 EDOC_MODULES = \
 	doc \

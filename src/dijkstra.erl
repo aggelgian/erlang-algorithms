@@ -26,7 +26,9 @@
 
 %% ============================================================================
 %% @doc Dijkstra's Algorithm
-%%
+%% 
+%% <p>For examples you can check the <code>dijsktra_demo</code> module.</p>
+%% 
 
 -module(dijkstra).
 
@@ -73,27 +75,27 @@ run(Graph, Root) ->
 %% ==========================================================
 %% Dijkstra Functions
 %% ==========================================================
-  
+
 %% Initalize Heap (Open Set), Visited (Closed Set), Parents
 -spec dijkstra_init(graph:vertex()) -> {open_set(), closed_set(), parents()}.
 dijkstra_init(Root) ->
-  Heap = ?INSERT_NODE_TO_HEAP(Root, 'root', 0, ?EMPTY_HEAP),
+  Heap = ?INSERT_NODE_TO_HEAP(Root, root, 0, ?EMPTY_HEAP),
   Visited = ?EMPTY_VISITED,
   Parents = ?EMPTY_PARENTS,
   {Heap, Visited, Parents}.
-  
+
 %% Dijkstra loop
 -spec dijkstra_step(graph:graph(), open_set(), closed_set(), parents()) -> parents().
 dijkstra_step(Graph, Heap, Visited, Parents) ->
   case ?IS_EMPTY_HEAP(Heap) of
-    'true' ->
+    true ->
       Parents;
-    'false' ->
+    false ->
       {Cost, Node, Prev, NewHeap} = ?GET_MIN_HEAP(Heap),
       case ?IS_VISITED(Node, Visited) of
-        'true' ->
+        true ->
           dijkstra_step(Graph, NewHeap, Visited, Parents);
-        'false' ->
+        false ->
           NewParents = ?ADD_TO_PARENTS(Node, Cost, Prev, Parents),
           NewVisited = ?ADD_TO_VISITED(Node, Visited),
           AdjList = ?GET_NEIGHBOURS(Node, Graph),
@@ -101,9 +103,9 @@ dijkstra_step(Graph, Heap, Visited, Parents) ->
             lists:foldl(
               fun(V,  H) ->
                 case ?IS_VISITED(V, NewVisited) of
-                  'true' ->
+                  true ->
                     H;
-                  'false' ->
+                  false ->
                     Edge = {Node, V},
                     Weight = ?EDGE_WEIGHT(Graph, Edge),
                     ?INSERT_NODE_TO_HEAP(V, Node, Cost + Weight, H)
