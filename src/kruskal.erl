@@ -26,7 +26,9 @@
 
 %% ============================================================================
 %% @doc Kruskal Algorithm
-%%
+%% 
+%% <p>For examples you can check the <code>kruskal_demo</code> module.</p>
+%% 
 
 -module(kruskal).
 
@@ -69,17 +71,17 @@ kruskal_step(UF, [], _N, Res) ->
   Res;
 kruskal_step(UF, [{{X, Y}, _W}=E|Es], N, Res) ->
   case result_size(Res) < N-1 of
-    'true' ->
+    true ->
       ParX = union_find:find(UF, X),
       ParY = union_find:find(UF, Y),
       case ParX =:= ParY of
-        'true' ->
+        true ->
           kruskal_step(UF, Es, N, Res);
-        'false' ->
-          'true' = union_find:union(UF, ParX, ParY),
+        false ->
+          true = union_find:union(UF, ParX, ParY),
           kruskal_step(UF, Es, N, add_to_result(Res, E))
       end;
-    'false' ->
+    false ->
       union_find:delete(UF),
       Res
   end.

@@ -30,7 +30,8 @@ DEMO_MODULES = \
 	union_find_demo \
 	bfs_demo \
 	dfs_demo \
-	dijkstra_demo
+	dijkstra_demo \
+	kruskal_demo
 
 EDOC_MODULES = \
 	doc \
