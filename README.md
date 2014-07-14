@@ -17,6 +17,7 @@ The goal of this project is to implement some useful algorithms and data structu
 	*  Kruskal
 	*  Edmonds-Karp
 	*  Ford-Fulkerson
+	*  A*
 
 How to Compile and Run
 ----------------------
@@ -27,11 +28,6 @@ How to Compile and Run
 *  Make edoc : `make edoc`
 
 The files in the `demo` folder contain functions that demostrate the code in action.
-<!--*  demo:min_heaps/0 demonstrates Min Heaps (`erl -pa ebin -eval "demo:min_heaps()" -s init stop`)-->
-<!--*  demo:max_heaps/0 demonstrates Max Heaps (`erl -pa ebin -eval "demo:max_heaps()" -s init stop`)-->
-<!--*  demo:union_find/0 demonstrates Union / Find (`erl -pa ebin -eval "demo:union_find()" -s init stop`)-->
-<!--*  demo:graph/0 demonstrates Dijkstra, BFS and DFS algorithms in a graph (`erl -pa ebin -eval "demo:graph()" -s init stop`)-->
-<!--*  demo:flow/0 demonstrates Edmonds-Karp and Ford-Fulkerson algorithms in a network (`erl -pa ebin -eval "demo:flow()" -s init stop`)-->
 
 For full documentation check the [site] (http://aggelgian.github.com/erlang-algorithms)
 

@@ -21,7 +21,8 @@ SRC_MODULES = \
 	kruskal \
 	heap \
 	union_find \
-	edmonds_karp
+	edmonds_karp \
+	a_star
 
 DEMO_MODULES = \
 	demo \
@@ -32,7 +33,8 @@ DEMO_MODULES = \
 	dfs_demo \
 	dijkstra_demo \
 	kruskal_demo \
-	flow_demo
+	flow_demo \
+	a_star_demo
 
 EDOC_MODULES = \
 	doc \

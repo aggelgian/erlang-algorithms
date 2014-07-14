@@ -54,3 +54,9 @@ puts "==========================================="
 puts "\nflow_demo:s1()"
 puts `erl -noshell -pa ebin -eval "flow_demo:s1()" -s init stop`
 
+puts "\nA* Search Algorithm"
+puts "==================="
+puts "\na_star_demo:b1()"
+puts `erl -noshell -pa ebin -eval "a_star_demo:b1()" -s init stop`
+
+
