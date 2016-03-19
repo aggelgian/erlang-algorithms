@@ -34,7 +34,8 @@ DEMO_MODULES = \
 	dijkstra_demo \
 	kruskal_demo \
 	flow_demo \
-	a_star_demo
+	a_star_demo \
+	import_export_demo
 
 EDOC_MODULES = \
 	doc \
@@ -69,7 +70,7 @@ edoc: $(TARGETS)
 demo: $(TARGETS)
 	@(./rundemo.rb)
 
-dialyze: $(TARGETS)
+dialyzer: $(TARGETS)
 	dialyzer -n -Wunmatched_returns $(EBIN)/*.beam
 
 clean:
