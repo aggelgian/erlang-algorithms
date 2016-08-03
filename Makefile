@@ -53,7 +53,7 @@ vpath %.erl $(ERL_DIRS)
 
 default: src_target demo_target
 
-all: $(TARGETS) dialyze
+all: $(TARGETS) dialyzer
 
 src_target: $(SRC_MODULES:%=$(EBIN)/%.beam)
 
