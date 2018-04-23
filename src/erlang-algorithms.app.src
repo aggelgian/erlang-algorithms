@@ -1,0 +1,7 @@
+{application, 'erlang-algorithms', [
+  {registered, []},
+  {vsn, "1.0.0"},
+  {description,
+    "Implementations of popular data structures and algorithms http://aggelgian.github.com/erlang-algorithms"},
+  {applications, [ kernel, stdlib ]}
+]}.
