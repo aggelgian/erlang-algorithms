@@ -1,8 +1,8 @@
 erlang-algorithms
 =================
 
-About the project
------------------
+### About the project
+
 The goal of this project is to implement some useful algorithms and data structures in Erlang so as to help anyone who may need them.
 
 *  Currently Implemented Data Structures:
@@ -19,8 +19,8 @@ The goal of this project is to implement some useful algorithms and data structu
 	*  Ford-Fulkerson
 	*  A*
 
-How to Compile and Run
-----------------------
+### How to Compile and Run
+
 *  Compile the source code and the demo : `make`
 *  Run dialyzer : `make dialyze`
 *  All of the above : `make all`
@@ -31,3 +31,7 @@ The files in the `demo` folder contain functions that demostrate the code in act
 
 For full documentation check the [site] (http://aggelgian.github.com/erlang-algorithms)
 
+
+### License
+
+This project released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
