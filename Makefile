@@ -1,4 +1,4 @@
-.PHONY: clean all distclean
+.PHONY: all clean demo dialyzer edoc distclean
 
 TOP = $(PWD)
 SRC  = $(PWD)/src
@@ -9,6 +9,8 @@ DOC = doc
 ERLC = erlc
 
 WARNS = +warn_exported_vars +warn_unused_import +warn_missing_spec
+DIALYZER_APPS = erts kernel stdlib compiler crypto syntax_tools
+DIALYZER_FLAGS = -Wunmatched_returns
 ERLC_FLAGS = +native +debug_info $(WARNS)
 ERLC_MACROS = -DDEMO_DATA=\"$(DEMO_DATA)\"
 
@@ -70,12 +72,14 @@ edoc: $(TARGETS)
 demo: $(TARGETS)
 	@(./rundemo.rb)
 
-dialyzer: $(TARGETS)
-	dialyzer -n -Wunmatched_returns $(EBIN)/*.beam
+dialyzer: .plt $(TARGETS)
+	dialyzer -n -nn --plt $< $(DIALYZER_FLAGS) $(EBIN)/*.beam
+
+.plt:
+	dialyzer --build_plt --output_plt $@ --apps $(DIALYZER_APPS)
 
 clean:
 	$(RM) $(EBIN)/*.beam
 
 distclean: clean
-	$(RM) $(DOC)/*.html $(DOC)/*.css $(DOC)/*.png $(DOC)/edoc-info
-
+	$(RM) $(DOC)/*.html $(DOC)/*.css $(DOC)/*.png $(DOC)/edoc-info .plt
