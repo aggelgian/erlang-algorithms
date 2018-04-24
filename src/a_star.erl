@@ -109,7 +109,9 @@
 
 run(Graph, Root, Target, H) ->
   State = astar_init(Graph, Root, Target, H),
-  astar_step(State).
+  R = astar_step(State),
+  astar_cleanup(State),
+  R.
 
 %% ==========================================================
 %% A* Functions
@@ -125,6 +127,10 @@ astar_init(G, Root, Target, H) ->
   Gscore = ?SET_GSCORE(Root, 0, ?EMPTY_GSCORE),
   Ps = ?ADD_PARENT(Root, root, ?EMPTY_PARENTS),
   #sts{graph=G, target=Target, h=H, open=Open, closed=Csd, fscore=Fscore, gscore=Gscore, parents=Ps}.
+
+%% Cleanup the state.
+astar_cleanup(State) ->
+  heap:delete(State#sts.fscore).
 
 %% A* loop
 -spec astar_step(astar_state()) -> astar_result().
