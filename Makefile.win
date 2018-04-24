@@ -1,0 +1,23 @@
+
+all:
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/graph.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/graph_lib.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/dijkstra.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/bfs.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/dfs.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/kruskal.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/heap.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/union_find.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/edmonds_karp.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin src/a_star.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/graph_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/heap_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/union_find_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/bfs_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/dfs_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/dijkstra_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/kruskal_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/flow_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/a_star_demo.erl
+	erlc +native +debug_info +warn_exported_vars +warn_unused_import +warn_missing_spec -DDEMO_DATA=\"demo/data\" -o ebin demo/src/import_export_demo.erl

@@ -57,7 +57,11 @@ run(G, S, T, Mode) when Mode =:= bfs; Mode =:= dfs ->
     directed ->
       {Flow, RN} = init_residual_network(G),
       ok = edmonds_karp_step(G, RN, Flow, S, T, Mode),
-      graph_lib:reconstruct_flow(ets:tab2list(Flow));
+      Out = graph_lib:reconstruct_flow(ets:tab2list(Flow)),
+      %% clean up residual graph and flow list
+      graph:del_graph(RN),
+      ets:delete(Flow),
+      Out;
     undirected ->
       {error, not_network}
   end.
