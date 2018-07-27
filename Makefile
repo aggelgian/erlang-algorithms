@@ -53,7 +53,7 @@ ERL_DIRS = \
 
 vpath %.erl $(ERL_DIRS)
 
-default: src_target demo_target
+default: src_target
 
 all: $(TARGETS) dialyzer
 
@@ -64,12 +64,13 @@ demo_target: $(DEMO_MODULES:%=$(EBIN)/%.beam)
 edoc_target: $(EDOC_MODULES:%=$(EBIN)/%.beam)
 
 $(EBIN)/%.beam: %.erl
-	$(ERLC) $(ERLC_FLAGS) $(ERLC_MACROS) -o $(EBIN) $<
+	@echo "ERLC $<"
+	@$(ERLC) $(ERLC_FLAGS) $(ERLC_MACROS) -o $(EBIN) $<
 
-edoc: $(TARGETS)
+edoc: src_target edoc_target
 	@(./makedoc.rb)
 
-demo: $(TARGETS)
+demo: src_target demo_target
 	@(./rundemo.rb)
 
 dialyzer: .plt $(TARGETS)

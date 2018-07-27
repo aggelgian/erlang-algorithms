@@ -1,37 +1,53 @@
-erlang-algorithms
-=================
+The goal of this project is to implement useful algorithms and data structures in Erlang.
 
-### About the project
+Below, you can see the data structures and algorithms that are implemented.
 
-The goal of this project is to implement some useful algorithms and data structures in Erlang so as to help anyone who may need them.
+**Data structures**
 
-*  Currently Implemented Data Structures:
-	*  Directed, Undirected, Weighted, Unweighted Graphs
-	*  Min / Max Heaps
-	*  Union / Find
+* Directed, Undirected, Weighted and Unweighted Graphs
+* Min and Max Heaps
+* Union - Find
 
-*  Currently Implemented Algorithms:
-	*  BFS
-	*  DFS
-	*  Dijkstra
-	*  Kruskal
-	*  Edmonds-Karp
-	*  Ford-Fulkerson
-	*  A*
+**Algorithms**
 
-### How to Compile and Run
+* BFS
+* DFS
+* Dijkstra
+* Kruskal
+* Edmonds-Karp
+* Ford-Fulkerson
+* A*
 
-*  Compile the source code and the demo : `make`
-*  Run dialyzer : `make dialyzer`
-*  All of the above : `make all`
-*  Run the demo : `make demo`
-*  Make edoc : `make edoc`
+## Quickstart
 
-The files in the `demo` folder contain functions that demostrate the code in action.
+**Get the sources**
 
-For full documentation check the [site](http://aggelgian.github.com/erlang-algorithms)
+    git clone git@github.com:aggelgian/erlang-algorithms.git
 
+**Compile the project**
 
-### License
+    make
+
+**View the demo**
+
+    make demo
+
+The files in the **demo** directory contain functions that demostrate the code.
+
+## Contribute
+
+**Run dialyzer**
+
+    make dialyzer
+
+**Generate the documentation**
+
+    make edoc
+
+## Documentation
+
+You can find the full documentation at the [website](http://aggelgian.github.com/erlang-algorithms).
+
+## License
 
 This project is released under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
