@@ -73,8 +73,12 @@ edoc: src_target edoc_target
 demo: src_target demo_target
 	@(./rundemo.rb)
 
-dialyzer: .plt $(TARGETS)
+dialyzer: .plt/.plt $(TARGETS)
 	dialyzer -n -nn --plt $< $(DIALYZER_FLAGS) $(EBIN)/*.beam
+
+.plt/.plt:
+	@mkdir -p .plt/
+	dialyzer --build_plt --output_plt $@ --apps $(DIALYZER_APPS)
 
 .plt:
 	dialyzer --build_plt --output_plt $@ --apps $(DIALYZER_APPS)
@@ -83,4 +87,4 @@ clean:
 	$(RM) $(EBIN)/*.beam
 
 distclean: clean
-	$(RM) $(DOC)/*.html $(DOC)/*.css $(DOC)/*.png $(DOC)/edoc-info .plt
+	$(RM) $(DOC)/*.html $(DOC)/*.css $(DOC)/*.png $(DOC)/edoc-info .plt/.plt
